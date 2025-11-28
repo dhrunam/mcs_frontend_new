@@ -1,0 +1,105 @@
+<div data-aos="fade-right" data-aos-duration="500">
+    <header class="d-flex justify-content-between align-items-center">
+        <h4>Consolidated Statement Report</h4>
+    </header>
+    <hr>
+
+
+    <div class="row g-3 mb-0">
+        <div class="row g-3  d-flex align-items-end">
+            <div class="col-3 col-lg-2">
+                <label for="month" class="form-label ">Month <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="month" [(ngModel)]="selectedMonth"
+                    (change)="ResetReport()">
+                    <option value="">---Select Month---</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+            <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">Year <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="year" [(ngModel)]="selectedYear" (change)="ResetReport()">
+                    <option value="0">---Select Year---</option>
+                    <option *ngFor="let year of years" [value]="year">
+                        {{ year }}
+                    </option>
+                </select>
+            </div>
+            <div class="col-3 col-lg-2 text-end text-lg-start mt-0">
+                <button class="btn btn-primary" type="button" (click)="LoadConsolidatedStatement()">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row g-3 mt-4 mb-0" id="table-to-pdf">
+        <span class="text-center" *ngIf="caseStatements.length > 0">
+            <h5>CONSOLIDATED STATEMENT OF ALL THE JUDICIAL OF ALL THE JUDICIAL OFFICER FOR THE MONTH OF {{selectedMonth
+                | uppercase}}, {{selectedYear}}</h5>
+        </span>
+        @if(caseStatements[0]){
+        <table class="table table-bordered">
+            <thead class="table-header">
+                <tr>
+                    <th scope="col" class="text-center"></th>
+                    <th scope="col" class="text-center"></th>
+                    <th scope="col" class="text-center" colspan="4">CIVIL CASES</th>
+                    <th scope="col" class="text-center" colspan="4">CRIMINAL CASES</th>
+                </tr>
+                <tr>
+                    <th scope="col" class="text-center" style="width: 20%;">Name of the Court</th>
+                    <th scope="col" class="text-center">Cases</th>
+                    <th scope="col" class="text-center">Opening Balance</th>
+                    <th scope="col" class="text-center">Institution</th>
+                    <th scope="col" class="text-center">Disposal</th>
+                    <th scope="col" class="text-center">Pending</th>
+                    <th scope="col" class="text-center">Opening Balance</th>
+                    <th scope="col" class="text-center">Institution</th>
+                    <th scope="col" class="text-center">Disposal</th>
+                    <th scope="col" class="text-center">Pending</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @for(c of caseStatements; track c; let i=$index){
+                <tr>
+                    <td class="text-center">{{c.organization_shortname}}</td>
+                    <td class="text-center">{{c.case_type}}</td>
+                    <td class="text-center">{{c?.civil_pending_start_of_month || 0}}</td>
+                    <td class="text-center">{{c?.civil_instituted_during_the_month || 0}}</td>
+                    <td class="text-center">
+                        {{(c?.civil_count_disposed_contested || 0)+(c?.civil_count_disposed_transferred || 0)+(c?.civil_count_disposed_uncontested || 0)}}
+                    </td>
+                    <td class="text-center">{{c?.civil_pending_in_hand || 0}}</td>
+                    <td class="text-center">{{c?.criminal_pending_start_of_month || 0}}</td>
+                    <td class="text-center">{{c?.criminal_instituted_during_the_month || 0}}</td>
+                    <td class="text-center">
+                        {{(c?.criminal_count_disposed_contested || 0) +(c?.criminal_count_disposed_transferred || 0) +(c?.criminal_count_disposed_uncontested || 0)}}
+                    </td>
+                    <td class="text-center">{{c?.criminal_pending_in_hand || 0}}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+    </div>
+
+    <div class="row g-3 mt-0 mb-0 justify-content-center">
+        <div class="col-12 col-lg-2 text-end text-lg-start">
+            <button *ngIf="caseStatements.length > 0" class="btn btn-primary btn-lg w-100"
+                (click)="GenerateReport()">Export as PDF <i class="bi bi-file-pdf"></i></button>
+        </div>
+    </div>
+
+</div>
+<app-toast [showToast]="showErrorToast" [message]="'No Records Found'"></app-toast>

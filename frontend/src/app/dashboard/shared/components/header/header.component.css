@@ -1,0 +1,42 @@
+nav{
+    background-color: #e2f4ff ;
+}
+ul, li{
+    list-style: none;
+}
+.offcanvas{
+    display: none;   
+}
+i{
+    font-size: 1.6em;
+    cursor: pointer;
+    visibility: hidden;
+}
+.profile .picture{
+    border-radius: 50%;
+    border: 1px solid black;
+    height: 44px;
+    width: 44px;
+    margin-right: 8px;
+    background-image: url("../../../../../assets/images/user_icon.png"); /* The image used */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover; /* Resize the background image to cover the entire container */
+}
+@media(max-width: 991px){
+    i{
+        visibility: visible;
+    }
+    .offcanvas{
+        display: block;
+        width: 52%;
+    }
+}
+.cursor-pointer:hover{
+    cursor: pointer;
+}
+
+.nav-link.active{
+    text-decoration: underline;
+    font-weight: bold;
+}

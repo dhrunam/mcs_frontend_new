@@ -1,0 +1,6 @@
+.toast{
+    border: none;
+    border-radius:  20px;
+    background-color: rgb(255, 221, 221);
+    transition: all 5s ease-in;
+}

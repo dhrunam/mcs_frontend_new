@@ -1,0 +1,117 @@
+<div data-aos="fade-right" data-aos-duration="500">
+    <header class="d-flex justify-content-between align-items-center">
+        <h4>Monthly Court Fee</h4>
+    </header>
+    <hr>
+
+
+    <div class="row g-3 mb-0">
+        <form #filter="ngForm" (ngSubmit)="onSubmit(filter)">
+        <div class="row g-3  d-flex align-items-start">
+           
+            <div class="col-3 col-lg-2">
+
+                <label for="month" class="form-label ">Month <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="month" #month="ngModel" [ngModel]="filterData && filterData.month || ''" [disabled]="showLoader"
+                    (change)="ResetReport()"
+                    required>
+                    <option value="">---Select Month---</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <small class="text-danger" *ngIf="month.touched && month.invalid">select a month</small>
+            </div>
+            <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">Year <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="year" #year="ngModel" [ngModel]="filterData && filterData.year || ''" [disabled]="showLoader"
+                    (change)="ResetReport()" required>
+                    <option value="">---Select Year---</option>
+                    <option *ngFor="let year of years" [value]="year">
+                        {{ year }}
+                    </option>
+                </select>
+                <small class="text-danger" *ngIf="year.touched && year.invalid">select a year</small>
+            </div>
+            <!-- <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">User <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''" [disabled]="showLoader"
+                    (change)="ResetReport()" required>
+                    <option value="">---Select User---</option>
+                    <option *ngFor="let user of userList" [value]="user.id">
+                        {{ user.username }}
+                    </option>
+                </select>
+                <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
+            </div> -->
+           
+    
+            <div class="col-3 col-lg-2  mt-0 d-flex align-items-end mt-lg-5">
+                <button class="btn btn-primary" type="submit" [disabled]="showLoader" >
+                    @if(showLoader){
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    }
+                    @else{
+                    <i class="bi bi-search"></i>
+                    }
+                </button>
+            </div>
+           
+        </div>
+         </form>
+    </div>
+
+       
+        <div *ngIf="courtFees" class="row g-3 mt-4 mb-0" id="table-to-pdf">
+            <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
+            <span class="text-center" >
+                <h5>COURT FEES FOR THE MONTH OF {{month.value | uppercase}}, {{year.value}}</h5>
+            </span>
+            <table class="table table-bordered" *ngIf="courtFees">
+                <thead class="table-header">
+                    <tr>
+                        <th>Sl No.</th>
+                        <th>COURT FEES</th>
+                        <th>COURT FINES</th>
+                        <th>BANK RECEIPT</th>
+                        <th>TOTAL</th>
+                    </tr>
+                </thead>
+                 <tbody>
+                    @if(courtFees && courtFees.length>0){
+                        @for(d of courtFees;track d ; let i=$index){
+                        <tr>
+                            <td width="10">{{i+1}}</td>
+                            <!-- <td width="80">{{d.type_name}} No. {{d.reg_year}}</td> -->
+                            <td>{{d.type_name}} No.{{d.reg_no}} of {{d.reg_year}} <br/>{{d.pet_name}} Vrs.  {{d.res_name}} <br> </td>
+                            <td>@if(d.other_fees){
+                                <span>{{d.other_fees}}</span>
+                             }
+                            @else{
+                                <span>Nil</span>
+                            } 
+                        </td>
+                        <td>Dummy data</td>
+                        <td>₹{{ (d.court_fees ?? 0) + (d.other_fees ?? 0) }}/-</td>
+                        </tr>
+                    }
+                    }
+                    @else{                       
+                    <tr class="text-center" ><td colspan="3" class="text-secondary">No record found</td></tr>
+                    }
+                    
+                </tbody>
+            </table>
+        </div>
+</div>
+
+

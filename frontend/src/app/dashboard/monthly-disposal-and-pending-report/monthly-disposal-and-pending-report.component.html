@@ -1,0 +1,224 @@
+<div data-aos="fade-right" data-aos-duration="500">
+    <header class="d-flex justify-content-between align-items-center">
+        <h4>Monthly Disposal Report</h4>
+    </header>
+    <hr>
+
+
+    <div class="row g-3 mb-0">
+        <div class="row g-3  d-flex align-items-end">
+            <div class="col-3 col-lg-2">
+                <label for="month" class="form-label ">Month <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="month" [(ngModel)]="selectedMonth"
+                    (change)="ResetReport()">
+                    <option value="">---Select Month---</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+            <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">Year <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="year" [(ngModel)]="selectedYear" (change)="ResetReport()">
+                    <option value="0">---Select Year---</option>
+                    <option *ngFor="let year of years" [value]="year">
+                        {{ year }}
+                    </option>
+                </select>
+            </div>
+            <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">Court <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="organization" [(ngModel)]="selectedOrganization" (change)="ResetReport()">
+                    <option value="0">---Select Court---</option>
+                        <option *ngFor="let org of organisationList" [value]="org.id">
+                            {{ org.organization_name }}
+                          </option>
+                </select>
+            </div>
+            <div class="col-3 col-lg-2 text-end text-lg-start mt-0">
+                <button class="btn btn-primary" type="button" (click)="LoadDisposalReport()">
+                    @if(showLoader){
+                        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    }
+                    @else{
+                        <i class="bi bi-search"></i>
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="table-to-pdf">
+        <div class="row g-3 mt-4 mb-0">
+            @if(disposalReport != 0){
+            <span class="text-center">
+                <h3><u>Criminal Side</u></h3>
+            </span>
+            <div class="pdf-border">
+            <table class="table table-bordered">
+                <thead class="table-header">
+                    <tr>
+                        <th scope="col" class="text-center" style="width: 5%;">Sl. No.</th>
+                        <th scope="col" class="text-center" style="width: 20%;"></th>
+                        <th scope="col" class="text-center" style="width: 10%;">{{selectedMonth}}</th>
+                        <th scope="col" class="text-center" width="40%">Oldest Case</th>
+                        <th scope="col" class="text-center">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">01</td>
+                        <td>Contested Disposal (Main)</td>
+                        <td class="text-center">{{disposalReport?.criminal_main_single?.count_disposed_contested}}</td>
+                        <td>{{disposalReport?.oldest_cases_criminal?.related_case_type?.desc_case}}</td>
+                        <td rowspan="6"  style="border-left: 0.5px solid grey; border-right: 3 px solid grey;">
+                           
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">02</td>
+                        <td>Contested Disposal (Misc.)</td>
+                        <td class="text-center">{{disposalReport?.criminal_misc_single?.count_disposed_contested}}</td>
+                        <td>Case No. {{disposalReport?.oldest_cases_criminal?.case_no}} </td>                        
+
+                    </tr>
+                    <tr>
+                        <td class="text-center">03</td>
+                        <td>Uncontested Disposal (Main)</td>
+                        <td class="text-center">{{disposalReport?.criminal_main_single?.count_disposed_uncontested}}</td>
+                        <td>{{disposalReport?.oldest_cases_criminal?.petitioner}} Vs. {{disposalReport?.oldest_cases_criminal?.responder}}</td>
+                        
+
+                    </tr>
+                    <tr>
+                        <td class="text-center">04</td>
+                        <td>Uncontested Disposal (Misc.)</td>
+                        <td class="text-center">{{disposalReport?.criminal_misc_single?.count_disposed_uncontested}}</td>
+                        <td>Inst.: {{disposalReport?.oldest_cases_criminal?.date_of_inst}}</td>
+                        
+
+                    </tr>
+                    <tr>
+                        <td class="text-center">05</td>
+                        <td>Pending in hand (Main)</td>
+                        <td class="text-center">{{disposalReport?.criminal_main_single?.pending_in_hand}}</td>
+                        <td>Status: {{disposalReport?.oldest_cases_criminal?.status}}</td>
+
+                    </tr>
+                    <tr>
+                        <td class="text-center">06</td>
+                        <td>Pending in hand (Misc.)</td>
+                        <td class="text-center">{{disposalReport?.criminal_misc_single?.pending_in_hand}}</td>
+                        <td></td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+            }
+        </div>
+        <div class="row g-3 mt-4 mb-0">
+            @if(disposalReport.length != 0){
+            <span class="text-center">
+                <h3><u>Civil Side</u></h3>
+            </span>
+            <div class="pdf-border">
+            <table class="table table-bordered">
+                <thead class="table-header">
+                    <tr>
+                        <th scope="col" class="text-center" style="width: 5%;">Sl. No.</th>
+                        <th scope="col" class="text-center" style="width: 20%;"></th>
+                        <th scope="col" class="text-center" style="width: 10%;">{{selectedMonth}}</th>
+                        <th scope="col" class="text-center" width="40%">Oldest Case</th>
+                        <th scope="col" class="text-center">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center" style="border-left: 1px solid black !important;">01</td>
+                        <td>Contested Disposal (Main)</td>
+                        <td class="text-center">{{disposalReport?.civil_main_single?.count_disposed_contested}}</td>
+                        <td>{{disposalReport?.oldest_cases_civil?.related_case_type?.desc_case}}</td>
+                        <td rowspan="6" style="background-color: white !important;"><div style="height: 100%;width: auto; background-color: white;"></div> </td>
+                    </tr>
+                    <tr>
+                        <td class="text-center">02</td>
+                        <td>Contested Disposal (Misc.)</td>
+                        <td class="text-center">{{disposalReport?.civil_misc_single?.count_disposed_contested}}</td>
+                        <td>Case No. {{disposalReport?.oldest_cases_civil?.case_no}}</td>
+
+                    </tr>
+                    <tr>
+                        <td class="text-center">03</td>
+                        <td>Uncontested Disposal (Main)</td>
+                        <td class="text-center">{{disposalReport?.civil_main_single?.count_disposed_uncontested}}</td>
+                        <td>{{disposalReport?.oldest_cases_civil?.petitioner}} Vs. {{disposalReport?.oldest_cases_civil?.responder}}</td>
+
+                    </tr>
+                    <tr>
+                        <td class="text-center">04</td>
+                        <td>Uncontested Disposal (Misc.)</td>
+                        <td class="text-center">{{disposalReport?.civil_misc_single?.count_disposed_uncontested}}</td>
+                        <td>Inst.: {{disposalReport?.oldest_cases_civil?.date_of_inst}}</td>
+
+                    </tr>
+                    <tr>
+                        <td class="text-center">05</td>
+                        <td>Pending in hand (Main)</td>
+                        <td class="text-center">{{disposalReport?.civil_main_single?.pending_in_hand}}</td>
+                        <td>Status: {{disposalReport?.oldest_cases_civil?.status}}</td>
+
+                    </tr>
+                    <tr>
+                        <td class="text-center">06</td>
+                        <td>Pending in hand (Misc.)</td>
+                        <td class="text-center">{{disposalReport?.civil_misc_single?.pending_in_hand}}</td>
+                        <td></td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+            }
+        </div>
+        <div class="row g-3 mt-4 mb-0">
+            @if(disposalReport != 0){
+            <div class="pdf-border">
+            <table class="table table-bordered">
+                <thead class="table-header">
+                    <tr>
+                        <th scope="col" class="text-center" style="width: 50%;">MONTH</th>
+                        <th scope="col" class="text-center" style="width: 50%;">{{selectedMonth}}, {{selectedYear}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>TOTAL CASES PENDING</b></td>
+                        <td class="text-center"><b>{{disposalReport?.notesheet_stats?.total_cases_pending}}</b></td>
+                    </tr>
+                    <tr>
+                        <td><b>TOTAL UNITS EARNED</b></td>
+                        <td class="text-center"><b>{{disposalReport?.notesheet_stats?.total_unit_earned}}</b></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+            }
+        </div>
+    </div>
+    <div class="row g-3 mt-0 mb-0 justify-content-center">
+        <div class="col-12 col-lg-2 text-end text-lg-start">             
+            <button class="btn btn-primary btn-lg w-100" *ngIf="disposalReport.length != 0" (click)="GenerateReport()">Export as PDF <i class="bi bi-file-pdf"></i></button>
+        </div>
+    </div>
+
+</div>

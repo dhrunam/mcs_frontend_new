@@ -1,0 +1,13 @@
+.form-control.ng-invalid.ng-touched,
+.form-select.ng-invalid.ng-touched{
+    border: 1px solid red;
+}
+.btn-primary{
+    border-color: #3990c2;
+    background-color: #3990c2;
+    border-radius: 12px;
+}
+.btn-primary:hover, .btn-primary:disabled{
+    border-color: #2b6b91;
+    background-color: #2b6b91;
+}

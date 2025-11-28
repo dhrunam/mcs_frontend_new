@@ -1,0 +1,268 @@
+<div data-aos="fade-right" data-aos-duration="500">
+    <header class="d-flex justify-content-between align-items-center">
+        <h4>Submit Monthly Case Statement</h4>
+    </header>
+    <hr>
+    <!-- <span class="text-center"><h5></h5></span> -->
+
+    <div class="row g-3 mb-0">
+        <div class="row g-3  d-flex align-items-end">
+            <div class="col-3 col-lg-2">
+                <label for="month" class="form-label ">Month <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="month" [(ngModel)]="selectedMonth"
+                    [disabled]="showLoader">
+                    <option value="">---Select Month---</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+            <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">Year <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="year" [(ngModel)]="selectedYear" [disabled]="showLoader">
+                    <option value="0">---Select Year---</option>
+                    <option *ngFor="let year of years" [value]="year">
+                        {{ year }}
+                    </option>
+                </select>
+            </div>
+            <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">Civil / Criminal<span class="text-danger"> *</span></label>
+                <select class="form-select shadow-none" name="caseType" [(ngModel)]="seletedCivilCriminal"
+                    [disabled]="showLoader">
+                    <option value="">---Select Type---</option>
+                    <option value="civil">Civil</option>
+                    <option value="criminal">Criminal</option>
+                </select>
+            </div>
+            <div class="col-3 col-lg-2 text-end text-lg-start mt-0">
+                <button class="btn btn-primary" type="button" [disabled]="showLoader" (click)="LoadMonthlyStatement()"
+                    [disabled]="showLoader">
+                    @if(showLoader){
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    }
+                    @else{
+                    <i class="bi bi-search"></i>
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if(caseStatements && caseStatements[0]?.is_draft==false)
+    {
+    <div class="text-end mt-4">
+        <h5 class="text-success">Note: Monthly Case Statement for the month of {{selectedMonth}} {{selectedYear}} has
+            been submitted on {{caseStatements[0].updated_at | date:'dd-MMM-yyyy'}}.</h5>
+    </div>
+    }
+
+    <div class="row g-3 mt-2 mb-0">
+        @if(caseStatements[0]){
+        <table class="table table-bordered">
+            <thead class="table-header">
+                <tr>
+                    <th scope="col" class="text-center" style="width: 18%;">Description of Cases</th>
+                    <th scope="col" class="text-center" style="width: 8%;">Pending at the beginning of the month</th>
+                    <th scope="col" class="text-center" style="width: 8%;">Instituted during the month</th>
+                    <th scope="col" class="text-center" style="width: 5%;">Total</th>
+                    <th scope="col" colspan="3" class="text-center" style="width: 15%;">No of cases disposed of during
+                        the month</th>
+                    <th scope="col" class="text-center" style="width: 3%">Pending in hand</th>
+                    <th scope="col" colspan="2" class="text-center" style="width: 15%;">Pending more than</th>
+                    <th scope="col" class="text-center" style="width: 3%;">Date of oldest cases</th>
+                    <th scope="col" class="text-center" style="width: 5%;">UNIT</th>
+                    <th scope="col" class="text-center" style="width: 5%;">No.of working days</th>
+                    <th scope="col" class="text-center" style="width: 15%;">REMARKS</th>
+                </tr>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col" class="text-center">Contested</th>
+                    <th scope="col" class="text-center">Uncontested</th>
+                    <th scope="col" class="text-center">Transferred</th>
+                    <th scope="col"></th>
+                    <th scope="col" class="text-center">2 yrs</th>
+                    <th scope="col" class="text-center">4 yrs</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                    <th scope="col"><input class="form-control" type="number" [(ngModel)]="noOfWorkingDays"
+                            (change)="changedNoOfWorkingDays()"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(c of caseStatements; track c; let i=$index){
+                <tr>
+                    <td>{{ c.desc_case }}</td>
+                    <td class="text-center">
+                        {{c.pending_start_of_month}}
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" [(ngModel)]="c.instituted_during_the_month"
+                            (change)="calculateTotal(c,c.instituted_during_the_month)">
+                    </td>
+                    <td class="text-center">
+                        {{c.total_count}}
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" [(ngModel)]="c.count_disposed_contested"
+                            (change)="calculateTotal(c,c.count_disposed_contested)">
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" [(ngModel)]="c.count_disposed_uncontested"
+                            (change)="calculateTotal(c,c.count_disposed_uncontested)">
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" [(ngModel)]="c.count_disposed_transferred"
+                            (change)="calculateTotal(c,c.count_disposed_transferred)">
+                    </td>
+                    <td class="text-center">
+                        <!-- <input class="form-control" type="number" [(ngModel)]="c.pending_in_hand" (change)="calculateTotal(c,c.pending_in_hand)"> -->
+                        {{c.pending_in_hand}}
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" [(ngModel)]="c.pending_more_then_2yrs"
+                            (change)="calculateTotal(c,c.pending_more_then_2yrs)">
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" [(ngModel)]="c.pending_more_then_4yrs"
+                            (change)="calculateTotal(c,c.pending_more_then_4yrs)">
+                    </td>
+                    <td>
+                        <input class="form-control" type="date" [(ngModel)]="c.date_of_oldest_case">
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" [(ngModel)]="c.unit"
+                            (change)="calculateTotal(c,c.unit)">
+                    </td>
+                    <td class="text-center">
+                        <!-- {{c.no_of_working_days}} -->
+                    </td>
+                    <td>
+                        <input class="form-control" type="text" [(ngModel)]="c.remarks">
+                    </td>
+                </tr>
+                }
+                <tr>
+                    <td class="fw-bold">TOTAL</td>
+                    <td class="text-center fw-bold">{{grandTotal.pending_start_of_month}}</td>
+                    <td class="text-center fw-bold">{{grandTotal.instituted_during_the_month}}</td>
+                    <td class="text-center fw-bold">{{grandTotal.total_count}}</td>
+                    <td class="text-center fw-bold">{{grandTotal.count_disposed_contested}}</td>
+                    <td class="text-center fw-bold">{{grandTotal.count_disposed_uncontested}}</td>
+                    <td class="text-center fw-bold">{{grandTotal.count_disposed_transferred}}</td>
+                    <td class="text-center fw-bold">{{grandTotal.pending_in_hand}}</td>
+                    <td class="text-center fw-bold">{{grandTotal.pending_more_then_2yrs}}</td>
+                    <td class="text-center fw-bold">{{grandTotal.pending_more_then_4yrs}}</td>
+                    <td class="text-center fw-bold"></td>
+                    <td class="text-center fw-bold">{{grandTotal.unit}}</td>
+                    <td class="text-center fw-bold">{{grandTotal.no_of_working_days}}</td>
+                    <td class="text-center fw-bold"></td>
+                </tr>
+            </tbody>
+        </table>
+        }
+    </div>
+
+    @if(caseStatements[0]){
+    <div class="row g-3 mt-2 mb-0">
+        <h5>Oldest Case Details</h5>
+        <hr>
+    </div>
+    <div class="row g-3 mt-0 mb-0">
+        <div class="col-3 col-lg-2">
+            <label for="caseType" class="form-label ">Case Type</label>
+            <select class="form-select shadow-none" name="caseType" [(ngModel)]="selectedCaseType">
+                <option value="0">---Select Case Type---</option>
+                <option *ngFor="let ctl of caseTypeList" [value]="ctl.id">
+                    {{ ctl.desc_case }}
+                </option>
+            </select>
+        </div>
+        <div class="col-3 col-lg-2">
+            <label for="caseNo" class="form-label ">Case No.</label>
+            <input class="form-control" type="text" [(ngModel)]="caseNo" />
+        </div>
+        <div class="col-3 col-lg-3">
+            <label for="petioner" class="form-label ">Petioner</label>
+            <input class="form-control" type="text" [(ngModel)]="petioner" />
+        </div>
+        <div class="col-3 col-lg-3">
+            <label for="responder" class="form-label ">Responder</label>
+            <input class="form-control" type="text" [(ngModel)]="responder" />
+        </div>
+        <div class="col-3 col-lg-2">
+            <label for="dateOfInstitution" class="form-label ">Date of Institution</label>
+            <input class="form-control" type="date" [(ngModel)]="dateOfInstitution" />
+        </div>
+    </div>
+    <div class="row g-3 mt-0 mb-0">
+        <div class="col-3 col-lg-12">
+            <label for="status" class="form-label ">Status</label>
+            <input class="form-control" type="text" [(ngModel)]="oldestCaseStatus" />
+        </div>
+    </div>
+    }
+    @if(caseStatements && caseStatements[0]?.is_draft==true){
+    <div class="row g-3 mt-0 mb-0 justify-content-center">
+        <div class="col-12 col-lg-2 text-end text-lg-start">
+            <button class="btn btn-primary btn-lg w-100" type="button" (click)="SaveMonthlyStatement()">SAVE AS
+                DRAFT</button>
+        </div>
+    </div>
+
+    <!-- <div class="row g-3 mt-4 mb-0">
+        <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+            <div class="col-12 col-lg-12">
+                <div class="col-4 float-start">
+                    <label>Upload Monthly Case Statement File</label>
+                    <input type="file" (change)="onFileChange($event)" class="form-control mt-2" />
+                </div>
+                <div class="col-4 float-start">
+                    <button class="btn btn-primary btn-lg mt-4 ms-3" type="submit"><i class="bi bi-upload"></i> Upload</button>
+                </div>
+            </div>
+          </form>
+    </div> -->
+
+    <div class="row g-3 mt-4 mb-0">
+        <label for="self_declaration" class="form-check-label pe-2 text-danger"><small>
+                <input type="checkbox" [(ngModel)]="isChecked" />
+                I hereby declare
+                that
+                the
+                information
+                provided
+                above is accurate and complete to the best of my knowledge and belief.</small>
+        </label>
+    </div>
+    <div class="row g-3 mt-0 mb-0">
+        <div class="col-12 col-lg-2 text-end text-lg-start">
+            <button class="btn btn-success btn-lg w-100" type="button"
+                (click)="SubmitMonthlyStatement()">SUBMIT</button>
+        </div>
+    </div>
+    }
+    <!-- @else if(caseStatements && caseStatements[0]?.is_draft==false)
+{
+    <div class="row g-3 mt-4 mb-0 text-center">
+          <h5 class="form-check-label pe-2 text-success">
+            Monthly Case Statement for the month of {{selectedMonth}} {{selectedYear}} has been submitted on {{caseStatements[0].updated_at | date:'dd-MMM-yyyy'}}.
+          </h5>
+    </div>
+} -->
+
+</div>
+<app-toast [showToast]="showErrorToast" [message]="'No Records Found'"></app-toast>

@@ -1,0 +1,21 @@
+.table-bordered {
+    border: 1px solid black; /* Outer border */
+}
+.table-bordered th, .table-bordered td {
+    border: 1px solid black; /* Inner cell borders */
+}
+
+        /* Remove rounded corners */
+        .table {
+            border-radius: 0; /* Ensure the table has no rounded corners */
+        }
+        .table-bordered {
+            border-radius: 0; /* Ensure the table borders have no rounded corners */
+        }
+        .table-bordered th, .table-bordered td {
+            border-radius: 0; /* Ensure the cell borders have no rounded corners */
+        }
+
+        .table th, tr {
+            vertical-align: middle; /* Vertically centers text */
+          }

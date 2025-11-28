@@ -1,0 +1,12 @@
+<div class="sidebar h-100">
+    <div class="logo text-center">
+        <img src="assets/images/justice_logo.png" class="mt-3" height="120">
+    </div>
+    <hr>
+    @if(userName === 'hcs_admin'){
+    <app-sidebar-menus></app-sidebar-menus>
+    }
+    @else{
+    <app-side-bar-district-menus></app-side-bar-district-menus>
+    }
+</div>
