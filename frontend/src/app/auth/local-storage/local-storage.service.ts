@@ -5,14 +5,15 @@ import { AuthInterface } from '../../shared/interfaces/auth-interface';
   providedIn: 'root'
 })
 export class LocalStorageService {
-  public saveData(data: AuthInterface){
+  public saveData(data: any){
+    console.log("auth_data:", data);
     if(window.localStorage.getItem('token') || window.localStorage.getItem('refreshToken')){
       window.localStorage.clear();
     }
-    window.localStorage.setItem('token', data.access);
-    window.localStorage.setItem('refreshToken', data.refresh);
+    window.localStorage.setItem('token', data.token);
+    // window.localStorage.setItem('refreshToken', data.refresh);
   }
-  public saveAccessToken(accessToken:any){    
+  public saveAccessToken(accessToken:any){
     localStorage.removeItem('token');
     window.localStorage.setItem('token', accessToken);
   }

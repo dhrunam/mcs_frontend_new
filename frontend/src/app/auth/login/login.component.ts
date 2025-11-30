@@ -4,7 +4,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import * as AOS from 'aos';
 import { AuthService } from '../auth.service';
 import { PromptComponent } from '../../shared/prompt/prompt/prompt.component';
-
+import { LocalStorageService } from '../local-storage/local-storage.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -42,6 +42,7 @@ export class LoginComponent {
       this.authService.login(fd).subscribe({
         next: (result: any) => {
           console.log("login success:", result);
+          console.log("token:", result.token);
           window.localStorage.setItem('username', data.value.username);
           window.localStorage.setItem('token', result.token);
           const redirectRoute = data.value.username === 'hcs_admin'
