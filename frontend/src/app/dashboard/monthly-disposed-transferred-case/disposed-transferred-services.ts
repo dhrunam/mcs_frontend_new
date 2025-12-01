@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { URL } from '../../../environment/environment';
 import { catchError, map, Observable, of } from 'rxjs';
 import { Case, castAsDisposedCasesReportViewModel, DisposedCasesReport, dummydata } from "../../shared/interfaces/disposed-transferred-case.interface";
 
@@ -26,6 +27,13 @@ export class DisposedTransferredService{
             );
 
             
+    }
+
+    // Upload disposed/transferred monthly report file
+    // Adjust endpoint path as required by backend
+    upload_disposed_transferred(formData: FormData) {
+        const uploadUrl = `${URL}/v2/reports/disposed_transferred/upload/`;
+        return this.http.post<any>(uploadUrl, formData);
     }
 
 
