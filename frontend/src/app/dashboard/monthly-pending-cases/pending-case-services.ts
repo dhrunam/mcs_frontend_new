@@ -32,4 +32,10 @@ export class PendingCaseService{
     // GetOrganizations() {
     //     return this.http.get<any>(`${URL}/v1/auth/organization/`);
     // }
+
+    // Upload monthly pending cases file
+    upload_pending_cases(formData: FormData) {
+        const uploadUrl = `http://10.182.144.12:8001/api/v1/reports/cis/report/pending/upload/`;
+        return this.http.post<any>(uploadUrl, formData);
+    }
 }
