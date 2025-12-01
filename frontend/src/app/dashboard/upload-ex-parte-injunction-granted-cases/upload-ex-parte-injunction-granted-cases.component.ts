@@ -5,16 +5,16 @@ import { AuthService } from '../../auth/auth.service';
 import { LocalStorageService } from '../../auth/local-storage/local-storage.service';
 import { uploadedReportsDummy } from '../../shared/data/last-uploaded-reports';
 import AOS from 'aos';
-import { UploadCasesOfUnderPrisonersService } from './upload-cases-of-under-prisoners.service';
+import { UploadExParteInjunctionGrantedCasesService } from './upload-ex-parte-injunction-granted-cases.service';
 
 @Component({
-  selector: 'app-upload-cases-of-under-prisoners',
+  selector: 'app-upload-ex-parte-injunction-granted-cases',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './upload-cases-of-under-prisoners.component.html',
-  styleUrl: './upload-cases-of-under-prisoners.component.css'
+  templateUrl: './upload-ex-parte-injunction-granted-cases.component.html',
+  styleUrl: './upload-ex-parte-injunction-granted-cases.component.css'
 })
-export class UploadCasesOfUnderPrisonersComponent {
+export class UploadExParteInjunctionGrantedCasesComponent {
   years: number[] = [];
   currentYear = new Date().getFullYear();
   selectedFile: File | null = null;
@@ -22,7 +22,7 @@ export class UploadCasesOfUnderPrisonersComponent {
   lastUploadedReport: { month: string; year: string; uploaded_at: string } | null = null;
   showLoader = false;
 
-  constructor(private authService: AuthService, private svc: UploadCasesOfUnderPrisonersService, private localStorageService: LocalStorageService) {}
+  constructor(private authService: AuthService, private svc: UploadExParteInjunctionGrantedCasesService, private localStorageService: LocalStorageService) {}
 
   ngOnInit(): void {
     AOS.init();
@@ -78,7 +78,7 @@ export class UploadCasesOfUnderPrisonersComponent {
     fd.append('case_type', case_type);
     fd.append('file', this.selectedFile as Blob, this.selectedFile?.name);
 
-    this.svc.upload_cases_of_under_prisoners(fd).subscribe({
+    this.svc.upload_ex_parte_injunction_granted_cases(fd).subscribe({
       next: (resp: any) => {
         this.uploadMessage = 'Upload successful.';
         const uploadedAt = resp && (resp.uploaded_at || resp.created_at || resp.timestamp) ? (resp.uploaded_at || resp.created_at || resp.timestamp) : new Date().toLocaleString();

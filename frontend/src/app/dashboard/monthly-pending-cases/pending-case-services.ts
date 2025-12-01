@@ -24,14 +24,12 @@ export class PendingCaseService{
                     ));
                 })
             );
-
-            
     }
 
 
-    // GetOrganizations() {
-    //     return this.http.get<any>(`${URL}/v1/auth/organization/`);
-    // }
+    get_last_uploaded_details():Observable<any>{
+        return this.http.get<any>(`${URL}/v1/auth/organization/`);
+    }
 
     // Upload monthly pending cases file
     upload_pending_cases(formData: FormData) {

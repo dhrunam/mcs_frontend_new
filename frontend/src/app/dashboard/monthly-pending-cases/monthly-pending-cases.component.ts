@@ -26,6 +26,7 @@ export class MonthlyPendingCasesComponent {
     selectedFile: File | null = null;
     uploadMessage: string = '';
     lastUploadedReport: { month: string; year: string; uploaded_at: string } | null = null;
+    last_uploaded_file_details: any = null;
   
   
     
@@ -101,6 +102,15 @@ export class MonthlyPendingCasesComponent {
         }
       });
     }
+
+    get_last_uploaded_file_details() {
+      this.pendingCaseService.get_last_uploaded_details().subscribe({
+        next: data => {
+          console.log("Last uploaded file details:", data);
+          // Process the data as needed
+          this.last_uploaded_file_details = data;
+        }});
+    }
   
     ResetReport() {
       this.pendingCases
@@ -112,13 +122,17 @@ export class MonthlyPendingCasesComponent {
       if (input.files && input.files.length > 0) {
         this.selectedFile = input.files[0];
         this.uploadMessage = this.selectedFile.name;
-      } else {
+
+        alert("Filen name is "+this.selectedFile.name);
+      } 
+      else {
         this.selectedFile = null;
         this.uploadMessage = '';
       }
     }
 
     onUpload(form: NgForm) {
+      console.log("Upload form data:", form.value);
       if (!form || form.invalid) {
         form.control.markAllAsTouched && form.control.markAllAsTouched();
         this.uploadMessage = 'Please select month, year and case type before uploading.';
@@ -144,7 +158,10 @@ export class MonthlyPendingCasesComponent {
       fd.append('month', month);
       fd.append('year', year);
       fd.append('case_type', case_type);
-      fd.append('file', this.selectedFile as Blob, this.selectedFile?.name);
+      fd.append('file', this.selectedFile, this.selectedFile?.name);
+      // console.log("FormData to be uploaded after file set:", fd.value);
+
+      alert(window.localStorage.getItem('username'));
 
       this.pendingCaseService.upload_pending_cases(fd).subscribe({
         next: (resp: any) => {

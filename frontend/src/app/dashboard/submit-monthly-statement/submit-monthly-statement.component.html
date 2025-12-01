@@ -107,7 +107,9 @@
                 <tr>
                     <td>{{ c.desc_case }}</td>
                     <td class="text-center">
-                        {{c.pending_start_of_month}}
+                        <input class="form-control" type="number" [(ngModel)]="c.pending_start_of_month"
+                            (change)="calculateTotal(c,c.pending_start_of_month)">
+                        <!-- {{}} -->
                     </td>
                     <td>
                         <input class="form-control" type="number" [(ngModel)]="c.instituted_during_the_month"
