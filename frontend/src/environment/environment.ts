@@ -1,4 +1,6 @@
 export const URL = 'http://10.182.144.249:8001/api'
+export const serverURL = 'http://10.182.144.249:8001/api'
+
 // export const URL = "http://10.182.144.12:8001/api"
 // export const URL = "http://10.182.144.110:8000/api"
 // export const URL = "http://localhost:8000/api"

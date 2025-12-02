@@ -13,7 +13,7 @@ import { catchError, throwError } from 'rxjs';
 @Component({
   selector: 'app-monthly-disposal-and-pending-report',
   standalone: true,
-  imports: [FormsModule, CommonModule, ToastComponent],
+  imports: [FormsModule, CommonModule],
   templateUrl: './monthly-disposal-and-pending-report.component.html',
   styleUrl: './monthly-disposal-and-pending-report.component.css'
 })
