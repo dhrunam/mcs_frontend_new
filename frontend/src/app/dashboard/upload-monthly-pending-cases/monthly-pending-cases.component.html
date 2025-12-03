@@ -1,0 +1,167 @@
+<div data-aos="fade-right" data-aos-duration="500">
+    <header class="d-flex justify-content-between align-items-center">
+        <h4>Upload Monthly Pending Cases Report</h4>
+    </header>
+    <hr>
+
+
+    <div class="row g-3 mb-0">
+        <form #filter="ngForm" (ngSubmit)="onSubmit(filter)">
+        <div class="row g-3  d-flex align-items-start">
+           
+            <div class="col-3 col-lg-2">
+
+                <label for="month" class="form-label ">Month <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="month" #month="ngModel" [ngModel]="filterData && filterData.month || ''" [disabled]="showLoader"
+                    (change)="ResetReport()"
+                    required>
+                    <option value="">---Select Month---</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <small class="text-danger" *ngIf="month.touched && month.invalid">select a month</small>
+            </div>
+            <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">Year <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="year" #year="ngModel" [ngModel]="filterData && filterData.year || ''" [disabled]="showLoader"
+                    (change)="ResetReport()" required>
+                    <option value="">---Select Year---</option>
+                    <option *ngFor="let year of years" [value]="year">
+                        {{ year }}
+                    </option>
+                </select>
+                <small class="text-danger" *ngIf="year.touched && year.invalid">select a year</small>
+            </div>
+            <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">Case Type <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="case_type" #case_type="ngModel" [ngModel]="filterData && filterData.case_type || ''"
+                    [disabled]="showLoader" (change)="ResetReport()" required>
+                    <option value="">---Select Case Type---</option>
+                    <option value="1">Civil</option>
+                    <option value="2">Criminal</option>
+                </select>
+
+                <small class="text-danger" *ngIf="case_type.touched && case_type.invalid">select case type</small>
+            </div>
+            <div class="col-6 col-lg-3">
+                <label class="form-label">Upload File <span class="text-danger">*</span></label>
+                <div class="d-flex gap-2 align-items-center">
+                    <input class="form-control form-control-sm" type="file"
+                    [class]="{'is-invalid': selectedFile == null && uploadMessage != ''}"
+                    (change)="onFileSelected($event)" [disabled]="showLoader" />
+                    
+                </div>
+                <small class="text-danger" *ngIf="uploadMessage">{{ uploadMessage }}</small>
+            </div>
+
+            <div class="col-3 col-lg-2 d-flex flex-column align-items-end  justify-content-end">
+            <button class="btn btn-primary btn-sm  " type="button" (click)="onUpload(filter)" [disabled]="showLoader">
+                       <i class="bi bi-floppy pe-2"></i>  <span> Upload </span>
+                    </button>
+            </div>
+            
+            <!-- <div class="col-3 col-lg-2">
+                <label for="year" class="form-label ">User <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''" [disabled]="showLoader"
+                    (change)="ResetReport()" required>
+                    <option value="">---Select User---</option>
+                    <option *ngFor="let user of userList" [value]="user.id">
+                        {{ user.username }}
+                    </option>
+                </select>
+                <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
+            </div> -->
+           
+    
+            <!-- <div class="col-3 col-lg-2  mt-0 d-flex align-items-end mt-lg-5">
+                <button class="btn btn-primary" type="submit" [disabled]="showLoader" >
+                    @if(showLoader){
+                    <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                    }
+                    @else{
+                    <i class="bi bi-search"></i>
+                    }
+                </button>
+            </div> -->
+           
+        </div>
+         </form>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-12" *ngIf="lastUploadedReport">
+            <div class="card p-3">
+                <h6>Last Uploaded Report</h6>
+                <table class="table table-sm table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th>Uploaded Month</th>
+                            <th>Uploaded Year</th>
+                            <th>Uploaded At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ lastUploadedReport.month }}</td>
+                            <td>{{ lastUploadedReport.year }}</td>
+                            <td>{{ lastUploadedReport.uploaded_at }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+       
+        <div *ngIf="pendingCases" class="row g-3 mt-4 mb-0" id="table-to-pdf">
+            <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
+            <span class="text-center" >
+                <h5>LIST OF {{case_type.value==1?'CIVIL':'Criminal' | uppercase }} CASES PENDING IN THE MONTH OF {{month.value | uppercase}}, {{year.value}}</h5>
+            </span>
+            <table class="table table-bordered" *ngIf="pendingCases">
+                <thead class="table-header">
+                    <tr>
+                        <th>Sl No.</th>
+                        <th>DATE OF INSTITUTION</th>
+                        <th>CASE NUMBER</th>
+                        <th>CAUSE TITLE</th>
+                        <th>TYPE OF CASES</th>
+                        <th>BRIEF NOTE</th>
+                        <th>STATUS</th>
+                    </tr>
+                </thead>
+                 <tbody>
+                    @if(pendingCases && pendingCases.length>0){
+                        @for(d of pendingCases;track d ; let i=$index){
+                        <tr>
+                            <td width="10">{{i+1}}</td>
+                            <td>23.12.2011</td>
+                            <td width="80">{{d.type_name}} No. {{d.reg_year}}</td>
+                            <td>{{d.pet_name}} <br/> Vrs. <br/>  <span *ngIf="d.ext_respondents?.length ?? 0 > 0">1.</span> {{d.res_name}} <br> <span *ngFor="let item of d.ext_respondents; let j = index">
+                                {{ j + 2 }}. {{ item.respondent }}<br>
+                              </span>  {{d.act_section?.[0]?.act_section}}</td>
+                            <td><span *ngIf="i%2==0">Attempt to murder</span> <span *ngIf="i%2==1">Murder</span></td>
+                            <td>Out of {{i+15}} PW's <br> {{i+13}}Pws examined</td>
+                            <td>Final</td>
+                        </tr>
+                    }
+                    }
+                    @else{                       
+                    <tr class="text-center" ><td colspan="3" class="text-secondary">No record found</td></tr>
+                    }
+                    
+                </tbody>
+            </table>
+        </div>
+</div>
+
