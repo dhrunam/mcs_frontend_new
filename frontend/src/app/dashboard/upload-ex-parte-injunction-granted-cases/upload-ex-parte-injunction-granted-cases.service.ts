@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { URL } from '../../../environment/environment';
+import { serverURL } from '../../../environment/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UploadExParteInjunctionGrantedCasesService {

@@ -3,7 +3,7 @@ import { LocalStorageService } from './local-storage/local-storage.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AuthInterface } from '../shared/interfaces/auth-interface';
 import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
-import { URL } from '../../environment/environment';
+import { serverURL } from '../../environment/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +22,7 @@ export class AuthService {
   }
 
   login(data: FormData){
-    return this.http.post<AuthInterface>(`${URL}/v2/auth/login/`, data)
+    return this.http.post<AuthInterface>(`${serverURL}/v2/auth/login/`, data)
                     .pipe(tap(respData => this.localStorageService.saveData(respData)),
                     //tap(() => this._isLoggedIn.next(true)),
                     tap(() => this.setUserProfile()));
@@ -31,7 +31,7 @@ export class AuthService {
   // Refresh tokens
   refreshToken(): Observable<any> {
     const refreshToken = this.localStorageService.getRefreshToken();
-    return this.http.post<any>(`${URL}/v2/auth/refresh/`, { refresh: refreshToken })
+    return this.http.post<any>(`${serverURL}/v2/auth/refresh/`, { refresh: refreshToken })
       .pipe(
         tap(response => this.localStorageService.saveAccessToken(response.access)),
         catchError(error => {
@@ -49,7 +49,7 @@ export class AuthService {
 
   setUserProfile(){
     console.log("user profile called");
-    return this.http.get<any>(`${URL}/v2/user/`).subscribe({next: data=>{
+    return this.http.get<any>(`${serverURL}/v2/user/`).subscribe({next: data=>{
       this.userProfile = data;
       console.log("user profile:",this.userProfile);
     }});
@@ -64,14 +64,14 @@ export class AuthService {
     // }
 
     getLoginUserInfo(){
-      return this.http.get<any>(`${URL}/v2/user_info`);
+      return this.http.get<any>(`${serverURL}/v2/user_info`);
     }
 
 
   getAllUsers() {
     let params = new HttpParams()
     .set('user_group', 'district_user');
-    return this.http.get<any>(`${URL}/v2/user/`,{params});
+    return this.http.get<any>(`${serverURL}/v2/user/`,{params});
   }
 
   getUserProfile(){

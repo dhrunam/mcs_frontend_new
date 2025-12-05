@@ -7,7 +7,7 @@ import { LocalStorageService } from '../auth/local-storage/local-storage.service
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [SidebarComponent, HeaderComponent, RouterOutlet],
+  imports: [HeaderComponent, RouterOutlet],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
   encapsulation: ViewEncapsulation.None,

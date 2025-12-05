@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
-import { castAsMonthlyCasesReportViewModel, dummydata } from "../../shared/interfaces/pending-case-report";
+import { castAsMonthlyCasesReportViewModel,  } from "../../shared/interfaces/pending-case-report";
 
 @Injectable({providedIn:'root'})
 export class PendingCaseService{
@@ -19,9 +19,7 @@ export class PendingCaseService{
                 )),
                 catchError((error)=>{
                     alert("Server error")
-                    return of(dummydata.flatMap((caseItem: any) =>
-                        caseItem.data.map((item: any) => castAsMonthlyCasesReportViewModel(item))
-                    ));
+                    return []
                 })
             );
     }
