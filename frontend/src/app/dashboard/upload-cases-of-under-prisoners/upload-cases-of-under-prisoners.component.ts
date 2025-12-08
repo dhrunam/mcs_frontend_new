@@ -6,6 +6,8 @@ import { LocalStorageService } from '../../auth/local-storage/local-storage.serv
 import { uploadedReportsDummy } from '../../shared/data/last-uploaded-reports';
 import AOS from 'aos';
 import { UploadCasesOfUnderPrisonersService } from './upload-cases-of-under-prisoners.service';
+import { ChangeDetectorRef } from '@angular/core';
+import { throwIfEmpty } from 'rxjs';
 
 @Component({
   selector: 'app-upload-cases-of-under-prisoners',
@@ -19,18 +21,23 @@ export class UploadCasesOfUnderPrisonersComponent {
   currentYear = new Date().getFullYear();
   selectedFile: File | null = null;
   uploadMessage = '';
-  lastUploadedReport: { month: string; year: string; uploaded_at: string } | null = null;
-  showLoader = false;
+  lastUploadedReport: any | null;
+    showLoader = false;
 
-  constructor(private authService: AuthService, private svc: UploadCasesOfUnderPrisonersService, private localStorageService: LocalStorageService) {}
+  constructor(private authService: AuthService,
+    private svc: UploadCasesOfUnderPrisonersService,
+    private localStorageService: LocalStorageService,
+    private cdr: ChangeDetectorRef
+
+  ) {}
 
   ngOnInit(): void {
     AOS.init();
     this.years = this.generateYears();
     if (!this.lastUploadedReport && uploadedReportsDummy && uploadedReportsDummy.length > 0) {
       const latest = uploadedReportsDummy[0];
-      this.lastUploadedReport = { month: latest.month, year: latest.year, uploaded_at: latest.uploaded_at };
-    }
+      }
+    this.LoadLastUploadedData();
   }
 
   private generateYears(): number[] {
@@ -51,6 +58,23 @@ export class UploadCasesOfUnderPrisonersComponent {
     }
   }
 
+  LoadLastUploadedData() {
+    this.svc.get_last_uploaded_details()
+      .subscribe({
+        next: (data: any) => {
+          // console.log("Last uploaded disposed transferred data:", data);
+          // this.getLatestReport = data.results;
+
+          this.lastUploadedReport = data;
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.error("Error fetching last uploaded disposed transferred data:", err);
+        }
+      });
+  }
+
+
   onUpload(form: NgForm) {
     if (!form || form.invalid) {
       form.control.markAllAsTouched && form.control.markAllAsTouched();
@@ -64,8 +88,8 @@ export class UploadCasesOfUnderPrisonersComponent {
 
     const month = form.value.month;
     const year = form.value.year;
-    const case_type = form.value.case_type;
-    if (!month || !year || !case_type) {
+
+    if (!month || !year) {
       this.uploadMessage = 'Select month, year and case type before uploading.';
       return;
     }
@@ -73,16 +97,16 @@ export class UploadCasesOfUnderPrisonersComponent {
     this.showLoader = true;
     const fd = new FormData();
     fd.append('username', this.localStorageService.getUserName() || '');
-    fd.append('month', month);
-    fd.append('year', year);
-    fd.append('case_type', case_type);
+    fd.append('report_month', month);
+    fd.append('report_year', year);
+
     fd.append('file', this.selectedFile as Blob, this.selectedFile?.name);
 
     this.svc.upload_cases_of_under_prisoners(fd).subscribe({
       next: (resp: any) => {
         this.uploadMessage = 'Upload successful.';
         const uploadedAt = resp && (resp.uploaded_at || resp.created_at || resp.timestamp) ? (resp.uploaded_at || resp.created_at || resp.timestamp) : new Date().toLocaleString();
-        this.lastUploadedReport = { month: String(month), year: String(year), uploaded_at: uploadedAt };
+        this.LoadLastUploadedData();
         this.showLoader = false;
       },
       error: (err: any) => {

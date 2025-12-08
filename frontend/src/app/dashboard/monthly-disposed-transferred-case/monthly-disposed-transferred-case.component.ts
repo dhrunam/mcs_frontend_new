@@ -10,6 +10,8 @@ import { uploadedReportsDummy } from '../../shared/data/last-uploaded-reports';
 import { HttpParams } from '@angular/common/http';
 import { Filter } from '../shared/interfaces/filter.interface';
 import { DisposedCasesReport, dummydata } from '../../shared/interfaces/disposed-transferred-case.interface';
+import { catchError, map, Observable, of } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-monthly-disposed-transferred-case',
   standalone: true,
@@ -26,17 +28,18 @@ export class MonthlyDisposedTransferredCaseComponent {
   showLoader: boolean = false;
   selectedFile: File | null = null;
   uploadMessage: string = '';
-  lastUploadedReport: { month: string; year: string; uploaded_at: string } | null = null;
+  lastUploadedReport: any = null;
 
 
-  
+
+
   filterData: Filter | null = null
   disposedTransferredCases: DisposedCasesReport [] |null=null;
 
 
 
   constructor(private authService: AuthService, private disposedTransferredService: DisposedTransferredService,
-    private localStorageService: LocalStorageService){}
+    private localStorageService: LocalStorageService, private cdr: ChangeDetectorRef){}
 
 
   ngOnInit(): void {
@@ -47,11 +50,14 @@ export class MonthlyDisposedTransferredCaseComponent {
     this.username = this.localStorageService.getUserName() || '';
     // this.GetOrganizationList();
     this.years = this.generateYears();
+    this.LoadLastUploadedData();
     // Initialize last uploaded report from dummy data if not already set
-    if (!this.lastUploadedReport && uploadedReportsDummy && uploadedReportsDummy.length > 0) {
-      const latest = uploadedReportsDummy[0];
-      this.lastUploadedReport = { month: latest.month, year: latest.year, uploaded_at: latest.uploaded_at };
-    }
+    // if (!this.lastUploadedReport && uploadedReportsDummy && uploadedReportsDummy.length > 0) {
+    //   const latest = uploadedReportsDummy[0];
+    //   this.lastUploadedReport = { month: latest.month, year: latest.year, uploaded_at: latest.uploaded_at };
+    // }
+    // console.log("lastUploadedReport:", this.lastUploadedReport$);
+
   }
 
   private generateYears(): number[] {
@@ -75,7 +81,7 @@ export class MonthlyDisposedTransferredCaseComponent {
 
 
   onSubmit(data:NgForm){
-    
+
     if(data.invalid){
       data.control.markAllAsTouched()
     }
@@ -90,7 +96,7 @@ export class MonthlyDisposedTransferredCaseComponent {
           // }
           this.showLoader=false
         }
-      )  
+      )
       // this.disposedTransferredCases = dummydata.flatMap(caseItem => caseItem.data)
       this.showLoader=false
     }
@@ -108,6 +114,23 @@ export class MonthlyDisposedTransferredCaseComponent {
   ResetReport() {
     this.disposedTransferredCases
      = null;
+  }
+
+  LoadLastUploadedData() {
+    this.disposedTransferredService
+      .get_last_uploaded_disposed_transferred_cases()
+      .subscribe({
+        next: (data: any) => {
+          // console.log("Last uploaded disposed transferred data:", data);
+          // this.getLatestReport = data.results;
+
+          this.lastUploadedReport = data;
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.error("Error fetching last uploaded disposed transferred data:", err);
+        }
+      });
   }
 
   onFileSelected(event: Event) {
@@ -143,10 +166,10 @@ export class MonthlyDisposedTransferredCaseComponent {
 
     this.showLoader = true;
     const fd = new FormData();
-    fd.append('username', this.username || '');
-    fd.append('month', month);
-    fd.append('year', year);
-    fd.append('case_type', case_type);
+    fd.append('username', this.localStorageService.getUserName() || '');
+    fd.append('report_month', month);
+    fd.append('report_year', year);
+    fd.append('civil_criminal', case_type);
     fd.append('file', this.selectedFile as Blob, this.selectedFile?.name);
 
     this.disposedTransferredService.upload_disposed_transferred(fd).subscribe({
@@ -154,7 +177,9 @@ export class MonthlyDisposedTransferredCaseComponent {
         this.uploadMessage = 'File uploaded successfully.';
         // Use server-provided timestamp if available, otherwise use local time
         const uploadedAt = resp && (resp.uploaded_at || resp.created_at || resp.timestamp) ? (resp.uploaded_at || resp.created_at || resp.timestamp) : new Date().toLocaleString();
-        this.lastUploadedReport = { month: String(month), year: String(year), uploaded_at: uploadedAt };
+        // this.lastUploadedReport = { month: String(month), year: String(year), uploaded_at: uploadedAt };
+        debugger;
+        this.LoadLastUploadedData();
         this.showLoader = false;
       },
       error: (err:any) => {
@@ -163,5 +188,6 @@ export class MonthlyDisposedTransferredCaseComponent {
         this.showLoader = false;
       }
     });
+
   }
 }

@@ -73,9 +73,9 @@ export class UploadCasesVulnerableGroupsComponent {
     this.showLoader = true;
     const fd = new FormData();
     fd.append('username', this.localStorageService.getUserName() || '');
-    fd.append('month', month);
-    fd.append('year', year);
-    fd.append('case_type', case_type);
+    fd.append('report_month', month);
+    fd.append('report_year', year);
+    fd.append('civil_criminal', case_type);
     fd.append('file', this.selectedFile as Blob, this.selectedFile?.name);
 
     this.svc.upload_cases_vulnerable_groups(fd).subscribe({

@@ -9,9 +9,9 @@
     <div class="row g-3 mb-0">
         <form #filter="ngForm" (ngSubmit)="onSubmit(filter)">
             <div class="row g-3  d-flex align-items-start">
-        
+
                 <div class="col-3 col-lg-2">
-        
+
                     <label for="month" class="form-label ">Month <span class="text-danger">*</span></label>
                     <select class="form-select shadow-none" name="month" #month="ngModel"
                         [ngModel]="filterData && filterData.month || ''" [disabled]="showLoader" (change)="ResetReport()"
@@ -50,10 +50,10 @@
                         [ngModel]="filterData && filterData.case_type || ''" [disabled]="showLoader" (change)="ResetReport()"
                         required>
                         <option value="">---Select Case Type---</option>
-                        <option value="1">Civil</option>
-                        <option value="2">Criminal</option>
+                        <option value="civil">Civil</option>
+                        <option value="criminal">Criminal</option>
                     </select>
-        
+
                     <small class="text-danger" *ngIf="case_type.touched && case_type.invalid">select case type</small>
                 </div>
                 <div class="col-3 col-lg-2" *ngIf="username==='hcs_admin'">
@@ -68,8 +68,8 @@
                     <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
                 </div>
 
-        
-        
+
+
                 <div class="col-3 col-lg-2  mt-0 d-flex align-items-end mt-lg-5">
                     <button class="btn btn-primary" type="submit" [disabled]="showLoader">
                         @if(showLoader){
@@ -80,7 +80,7 @@
                         }
                     </button>
                 </div>
-        
+
                 <div *ngIf="allVulnerableOtherGroupCases && allVulnerableOtherGroupCases.length>0"
                     class="col-3 col-lg-2 text-left bg-secondary-subtle rounded-2  pb-2">
                     <label for="year" class="form-label ">Filter <span class="text-danger"><i
@@ -94,7 +94,7 @@
                         </option>
                     </select>
                 </div>
-        
+
             </div>
         </form>
     </div>
@@ -103,7 +103,7 @@
     <div *ngIf="vulnerableOtherGroupCases" class="row g-3 mt-4 mb-0" id="table-to-pdf">
         <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
         <span class="text-center">
-            <h5>STATUS REPORT OF THE PENDING CASES IN {{filteredOrganization | uppercase}}, SIKKIM<br /> PERTAINING TO SENIOR CITIZENS, MINORS, 
+            <h5>STATUS REPORT OF THE PENDING CASES IN {{filteredOrganization | uppercase}}, SIKKIM<br /> PERTAINING TO SENIOR CITIZENS, MINORS,
             DIFFERENTLY ABLED AND OTHER MARGINALIZED GROUPS AS ON {{lastDateOfMonth}}.{{month.value |
                 uppercase}}.{{year.value}}</h5>
         </span>
@@ -120,7 +120,7 @@
                 @for(d of vulnerableOtherGroupCases;track d ; let i=$index){
                 <tr>
                     <td width="5">{{i+1}}</td>
-                    <td width="80">{{d.type_name}} No. {{d.reg_no}} of {{d.reg_year}} <br/> 
+                    <td width="80">{{d.type_name}} No. {{d.reg_no}} of {{d.reg_year}} <br/>
                     {{d.pet_name}} Vrs. <span *ngIf="d.ext_respondents?.length ?? 0 > 0">1.</span> {{d.res_name}}
                     </td >
                     <!-- <td>{{d.pet_name}} <br /> Vrs. {{d.res_name}} <br> -->

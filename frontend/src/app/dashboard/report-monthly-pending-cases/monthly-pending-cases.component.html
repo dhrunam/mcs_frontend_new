@@ -8,7 +8,7 @@
     <div class="row g-3 mb-0">
         <form #filter="ngForm" (ngSubmit)="onSubmit(filter)">
         <div class="row g-3  d-flex align-items-start">
-           
+
             <div class="col-3 col-lg-2">
 
                 <label for="month" class="form-label ">Month <span class="text-danger">*</span></label>
@@ -47,8 +47,8 @@
                 <select class="form-select shadow-none" name="case_type" #case_type="ngModel" [ngModel]="filterData && filterData.case_type || ''"
                     [disabled]="showLoader" (change)="ResetReport()" required>
                     <option value="">---Select Case Type---</option>
-                    <option value="1">Civil</option>
-                    <option value="2">Criminal</option>
+                    <option value="civil">Civil</option>
+                    <option value="criminal">Criminal</option>
                 </select>
 
                 <small class="text-danger" *ngIf="case_type.touched && case_type.invalid">select case type</small>
@@ -65,9 +65,9 @@
                 <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
             </div>
 
-            
-           
-    
+
+
+
             <div class="col-3 col-lg-2  mt-0 d-flex align-items-end mt-lg-5">
                 <button class="btn btn-primary" type="submit" [disabled]="showLoader" >
                     @if(showLoader){
@@ -89,14 +89,14 @@
                     </option>
                 </select>
             </div>
-           
+
         </div>
          </form>
     </div>
 
-    
 
-       
+
+
         <div *ngIf="pendingCases" class="row g-3 mt-4 mb-0" id="table-to-pdf">
             <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
             <span class="text-center" >
@@ -133,10 +133,10 @@
                         </tr>
                     }
                     }
-                    @else{                       
+                    @else{
                     <tr class="text-center" ><td colspan="3" class="text-secondary">No record found</td></tr>
                     }
-                    
+
                 </tbody>
             </table>
         </div>

@@ -37,8 +37,8 @@
         <label class="form-label">Case Type <span class="text-danger">*</span></label>
         <select class="form-select" name="case_type" #case_type="ngModel" [ngModel]="''" required>
           <option value="">---Select Case Type---</option>
-          <option value="1">Civil</option>
-          <option value="2">Criminal</option>
+            <option value="civil">Civil</option>
+            <option value="criminal">Criminal</option>
         </select>
       </div>
 
@@ -53,27 +53,36 @@
     </div>
   </form>
 
-  <div class="row mt-3" *ngIf="lastUploadedReport">
-    <div class="col-12">
+  <div class="col-12 mt-3">
       <div class="card p-3">
         <h6>Last Uploaded Report</h6>
+
+          <!-- <ng-container *ngIf="(lastUploadedReport$ | async) as report; else loading"> -->
+
         <table class="table table-sm table-bordered mb-0">
-          <thead>
+        <thead>
+          <tr>
+            <th>Uploaded Month</th>
+            <th>Uploaded Year</th>
+            <th>Uploaded At</th>
+          </tr>
+        </thead>
+        @if (lastUploadedReport) {
+        <tbody>
+          @for (item of lastUploadedReport.results; track item.id) {
             <tr>
-              <th>Uploaded Month</th>
-              <th>Uploaded Year</th>
-              <th>Uploaded At</th>
+              <td>{{ item.report_month }}</td>
+              <td>{{ item.report_year }}</td>
+              <td>{{ item.updated_at }}</td>
             </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>{{ lastUploadedReport.month }}</td>
-              <td>{{ lastUploadedReport.year }}</td>
-              <td>{{ lastUploadedReport.uploaded_at }}</td>
-            </tr>
+          }
           </tbody>
-        </table>
+        }
+      </table>
+
+
       </div>
-    </div>
   </div>
+
+
 </div>

@@ -8,7 +8,7 @@
     <div class="row g-3 mb-0">
         <form #filter="ngForm" (ngSubmit)="onSubmit(filter)">
         <div class="row g-3  d-flex align-items-start">
-           
+
             <div class="col-3 col-lg-2">
 
                 <label for="month" class="form-label ">Month <span class="text-danger">*</span></label>
@@ -47,8 +47,8 @@
                 <select class="form-select shadow-none" name="case_type" #case_type="ngModel" [ngModel]="filterData && filterData.case_type || ''"
                     [disabled]="showLoader" (change)="ResetReport()" required>
                     <option value="">---Select Case Type---</option>
-                    <option value="1">Civil</option>
-                    <option value="2">Criminal</option>
+                    <option value="civil">Civil</option>
+                    <option value="criminal">Criminal</option>
                 </select>
 
                 <small class="text-danger" *ngIf="case_type.touched && case_type.invalid">select case type</small>
@@ -59,7 +59,7 @@
                     <input class="form-control form-control-sm" type="file"
                     [class]="{'is-invalid': selectedFile == null && uploadMessage != ''}"
                     (change)="onFileSelected($event)" [disabled]="showLoader" />
-                    
+
                 </div>
                 <small class="text-danger" *ngIf="uploadMessage">{{ uploadMessage }}</small>
             </div>
@@ -69,7 +69,7 @@
                        <i class="bi bi-floppy pe-2"></i>  <span> Upload </span>
                     </button>
             </div>
-            
+
             <!-- <div class="col-3 col-lg-2">
                 <label for="year" class="form-label ">User <span class="text-danger">*</span></label>
                 <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''" [disabled]="showLoader"
@@ -81,8 +81,8 @@
                 </select>
                 <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
             </div> -->
-           
-    
+
+
             <!-- <div class="col-3 col-lg-2  mt-0 d-flex align-items-end mt-lg-5">
                 <button class="btn btn-primary" type="submit" [disabled]="showLoader" >
                     @if(showLoader){
@@ -93,75 +93,43 @@
                     }
                 </button>
             </div> -->
-           
+
         </div>
          </form>
     </div>
 
-    <div class="row mt-3">
-        <div class="col-12" *ngIf="lastUploadedReport">
-            <div class="card p-3">
-                <h6>Last Uploaded Report</h6>
-                <table class="table table-sm table-bordered mb-0">
-                    <thead>
-                        <tr>
-                            <th>Uploaded Month</th>
-                            <th>Uploaded Year</th>
-                            <th>Uploaded At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>{{ lastUploadedReport.month }}</td>
-                            <td>{{ lastUploadedReport.year }}</td>
-                            <td>{{ lastUploadedReport.uploaded_at }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="col-12 mt-3">
+      <div class="card p-3">
+        <h6>Last Uploaded Report</h6>
+
+          <!-- <ng-container *ngIf="(lastUploadedReport$ | async) as report; else loading"> -->
+
+        <table class="table table-sm table-bordered mb-0">
+        <thead>
+          <tr>
+            <th>Uploaded Month</th>
+            <th>Uploaded Year</th>
+            <th>Uploaded At</th>
+          </tr>
+        </thead>
+        @if (lastUploadedReport) {
+        <tbody>
+          @for (item of lastUploadedReport.results; track item.id) {
+            <tr>
+              <td>{{ item.report_month }}</td>
+              <td>{{ item.report_year }}</td>
+              <td>{{ item.updated_at }}</td>
+            </tr>
+          }
+          </tbody>
+        }
+      </table>
+
+
+      </div>
     </div>
 
-       
-        <div *ngIf="pendingCases" class="row g-3 mt-4 mb-0" id="table-to-pdf">
-            <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
-            <span class="text-center" >
-                <h5>LIST OF {{case_type.value==1?'CIVIL':'Criminal' | uppercase }} CASES PENDING IN THE MONTH OF {{month.value | uppercase}}, {{year.value}}</h5>
-            </span>
-            <table class="table table-bordered" *ngIf="pendingCases">
-                <thead class="table-header">
-                    <tr>
-                        <th>Sl No.</th>
-                        <th>DATE OF INSTITUTION</th>
-                        <th>CASE NUMBER</th>
-                        <th>CAUSE TITLE</th>
-                        <th>TYPE OF CASES</th>
-                        <th>BRIEF NOTE</th>
-                        <th>STATUS</th>
-                    </tr>
-                </thead>
-                 <tbody>
-                    @if(pendingCases && pendingCases.length>0){
-                        @for(d of pendingCases;track d ; let i=$index){
-                        <tr>
-                            <td width="10">{{i+1}}</td>
-                            <td>23.12.2011</td>
-                            <td width="80">{{d.type_name}} No. {{d.reg_year}}</td>
-                            <td>{{d.pet_name}} <br/> Vrs. <br/>  <span *ngIf="d.ext_respondents?.length ?? 0 > 0">1.</span> {{d.res_name}} <br> <span *ngFor="let item of d.ext_respondents; let j = index">
-                                {{ j + 2 }}. {{ item.respondent }}<br>
-                              </span>  {{d.act_section?.[0]?.act_section}}</td>
-                            <td><span *ngIf="i%2==0">Attempt to murder</span> <span *ngIf="i%2==1">Murder</span></td>
-                            <td>Out of {{i+15}} PW's <br> {{i+13}}Pws examined</td>
-                            <td>Final</td>
-                        </tr>
-                    }
-                    }
-                    @else{                       
-                    <tr class="text-center" ><td colspan="3" class="text-secondary">No record found</td></tr>
-                    }
-                    
-                </tbody>
-            </table>
-        </div>
+
+
 </div>
 

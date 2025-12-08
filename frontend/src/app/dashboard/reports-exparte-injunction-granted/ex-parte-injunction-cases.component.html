@@ -48,10 +48,10 @@
                     <select class="form-select shadow-none" name="case_type" #case_type="ngModel"
                         [ngModel]="filterData && filterData.case_type || ''" [disabled]="showLoader" (change)="ResetReport()" required>
                         <option value="">---Select Case Type---</option>
-                        <option value="1">Civil</option>
-                        <option value="2">Criminal</option>
+                        <option value="civil">Civil</option>
+                        <option value="criminal">Criminal</option>
                     </select>
-                
+
                     <small class="text-danger" *ngIf="case_type.touched && case_type.invalid">select case type</small>
                 </div>
                 <div class="col-3 col-lg-2" *ngIf="username==='hcs_admin'">
@@ -98,11 +98,11 @@
 
     <div *ngIf="exParteInjunctionCases" class="row g-3 mt-4 mb-0" id="table-to-pdf">
         <span class="text-center">
-            <h5>LIST OF CASES IN {{filteredOrganization | uppercase}}, SIKKIM 
+            <h5>LIST OF CASES IN {{filteredOrganization | uppercase}}, SIKKIM
                 <br/> WHERE EX PARTE INJUNCTION WAS GRANTED AS ON {{lastDateOfMonth && lastDateOfMonth}}.{{month.value}}.{{year.value}}
             </h5>
         </span>
-        
+
         <table class="table table-bordered" *ngIf="exParteInjunctionCases">
             <thead class="table-header">
                 <tr>

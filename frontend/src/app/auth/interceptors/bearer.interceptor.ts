@@ -14,7 +14,7 @@ export const bearerInterceptor: HttpInterceptorFn = (req, next) => {
       modifiedReq = req.clone({
         setHeaders: {
           Accept: "*/*",
-          "Content-Type":'application/json',
+          // "Content-Type":'application/json',
           Authorization: `Token ${accessToken}`
         }
       });

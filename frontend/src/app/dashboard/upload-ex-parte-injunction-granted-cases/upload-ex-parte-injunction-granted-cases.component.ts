@@ -6,6 +6,7 @@ import { LocalStorageService } from '../../auth/local-storage/local-storage.serv
 import { uploadedReportsDummy } from '../../shared/data/last-uploaded-reports';
 import AOS from 'aos';
 import { UploadExParteInjunctionGrantedCasesService } from './upload-ex-parte-injunction-granted-cases.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-upload-ex-parte-injunction-granted-cases',
@@ -19,18 +20,19 @@ export class UploadExParteInjunctionGrantedCasesComponent {
   currentYear = new Date().getFullYear();
   selectedFile: File | null = null;
   uploadMessage = '';
-  lastUploadedReport: { month: string; year: string; uploaded_at: string } | null = null;
+  lastUploadedReport: any | null = null;
   showLoader = false;
 
-  constructor(private authService: AuthService, private svc: UploadExParteInjunctionGrantedCasesService, private localStorageService: LocalStorageService) {}
+  constructor(private authService: AuthService,
+    private svc: UploadExParteInjunctionGrantedCasesService,
+    private localStorageService: LocalStorageService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngOnInit(): void {
     AOS.init();
     this.years = this.generateYears();
-    if (!this.lastUploadedReport && uploadedReportsDummy && uploadedReportsDummy.length > 0) {
-      const latest = uploadedReportsDummy[0];
-      this.lastUploadedReport = { month: latest.month, year: latest.year, uploaded_at: latest.uploaded_at };
-    }
+    this.LoadLastUploadedData();
   }
 
   private generateYears(): number[] {
@@ -49,6 +51,21 @@ export class UploadExParteInjunctionGrantedCasesComponent {
       this.selectedFile = null;
       this.uploadMessage = '';
     }
+  }
+  LoadLastUploadedData() {
+    this.svc.get_last_uploaded_details()
+      .subscribe({
+        next: (data: any) => {
+          // console.log("Last uploaded disposed transferred data:", data);
+          // this.getLatestReport = data.results;
+
+          this.lastUploadedReport = data;
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.error("Error fetching last uploaded disposed transferred data:", err);
+        }
+      });
   }
 
   onUpload(form: NgForm) {
@@ -73,16 +90,16 @@ export class UploadExParteInjunctionGrantedCasesComponent {
     this.showLoader = true;
     const fd = new FormData();
     fd.append('username', this.localStorageService.getUserName() || '');
-    fd.append('month', month);
-    fd.append('year', year);
-    fd.append('case_type', case_type);
+    fd.append('report_month', month);
+    fd.append('report_year', year);
+    fd.append('civil_criminal', case_type);
     fd.append('file', this.selectedFile as Blob, this.selectedFile?.name);
 
     this.svc.upload_ex_parte_injunction_granted_cases(fd).subscribe({
       next: (resp: any) => {
         this.uploadMessage = 'Upload successful.';
         const uploadedAt = resp && (resp.uploaded_at || resp.created_at || resp.timestamp) ? (resp.uploaded_at || resp.created_at || resp.timestamp) : new Date().toLocaleString();
-        this.lastUploadedReport = { month: String(month), year: String(year), uploaded_at: uploadedAt };
+        this.LoadLastUploadedData();
         this.showLoader = false;
       },
       error: (err: any) => {

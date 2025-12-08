@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of } from 'rxjs';
 import { castAsMonthlyCasesReportViewModel,  } from "../../shared/interfaces/pending-case-report";
-
+import { serverURL } from "../../../environment/environment";
 @Injectable({providedIn:'root'})
 export class PendingCaseService{
 
@@ -26,12 +26,12 @@ export class PendingCaseService{
 
 
     get_last_uploaded_details():Observable<any>{
-        return this.http.get<any>(`${URL}/v1/auth/organization/`);
+        return this.http.get<any>(`${serverURL}/v2/report/pending/cases/latest`);
     }
 
     // Upload monthly pending cases file
     upload_pending_cases(formData: FormData) {
-        const uploadUrl = `http://10.182.144.12:8001/api/v1/reports/cis/report/pending/upload/`;
-        return this.http.post<any>(uploadUrl, formData);
+         const uploadUrl = `${serverURL}/v2/report/pending/cases/`;
+               return this.http.post<any>(uploadUrl, formData);
     }
 }

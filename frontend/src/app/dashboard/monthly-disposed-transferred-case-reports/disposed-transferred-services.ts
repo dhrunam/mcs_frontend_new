@@ -26,11 +26,11 @@ export class DisposedTransferredReportService{
                 // })
             );
 
-            
+
     }
 
     getOrganizations() {
-        return this.http.get<any>(`${serverURL}/v1/auth/organization/`);
+        return this.http.get<any>(`${serverURL}/v2/organization/`);
     }
 
 

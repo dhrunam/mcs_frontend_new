@@ -50,7 +50,7 @@ export class SubmitMonthlyStatementService {
 
   GetOrganizations()
   {
-    return this.http.get<any>(`${URL}/v2/organization/`);
+    return this.http.get<any>(`${serverURL}/v2/organization/`);
   }
 
   uploadMonthlyStatementFile(formData: FormData) {
