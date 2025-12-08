@@ -7,6 +7,8 @@ import { VulnerableGroupCaseService } from './vulnerable-group-case.service';
 import AOS from 'aos';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
+
 @Component({
   selector: 'app-vunerable-group-pending-cases',
   standalone: true,
@@ -117,7 +119,7 @@ export class VunerableGroupPendingCasesComponent {
         data => {
           this.vulnerableOtherGroupCases = data;
           this.allVulnerableOtherGroupCases = data;
-         
+
           this.casetypeNames = ['All', ...new Set(this.vulnerableOtherGroupCases.map(caseItem => caseItem.type_name))];
           console.log("Monthly vulnerable case data is ", data)
           this.lastDateOfMonth = this.getLastDateOfMonth(Number(formdata.value.month), Number(formdata.value.year));
@@ -125,11 +127,11 @@ export class VunerableGroupPendingCasesComponent {
           // this.vulnerableOtherGroupCases=dummydata.flatMap(caseItem=> caseItem.data)
           // }
           this.showLoader = false
-          
+
         }
       )
       // this.vulnerableOtherGroupCases = dummydata.flatMap(caseItem => caseItem.data)
-      
+
     }
   }
 

@@ -73,8 +73,8 @@
                     <table class="table table-sm table-bordered mb-0">
                     <thead>
                       <tr>
-                        <th>Uploaded Month</th>
-                        <th>Uploaded Year</th>
+                        <th> Month</th>
+                        <th> Year</th>
                         <th>Uploaded At</th>
                       </tr>
                     </thead>
@@ -82,9 +82,9 @@
                     <tbody>
                       @for (item of lastUploadedReport.results; track item.id) {
                         <tr>
-                          <td>{{ item.report_month }}</td>
+                          <td>{{ item.report_month | date: 'MMMM' }}</td>
                           <td>{{ item.report_year }}</td>
-                          <td>{{ item.updated_at }}</td>
+                          <td>{{ item.updated_at | date: 'dd MMMM,yyyy' }} at {{ item.updated_at | date: 'hh:mm a'}} </td>
                         </tr>
                       }
                       </tbody>

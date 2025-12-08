@@ -30,4 +30,7 @@ export class VulnerableGroupCaseService {
     getOrganizations(){
         return this.http.get<any>(`${serverURL}/v1/auth/organization/`);
     }
+
+
+
 }
