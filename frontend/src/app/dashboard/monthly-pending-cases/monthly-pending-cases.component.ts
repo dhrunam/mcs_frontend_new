@@ -122,7 +122,7 @@ export class MonthlyPendingCasesComponent {
         this.selectedFile = input.files[0];
         this.uploadMessage = this.selectedFile.name;
 
-        alert("Filen name is "+this.selectedFile.name);
+
       }
       else {
         this.selectedFile = null;
@@ -160,7 +160,7 @@ export class MonthlyPendingCasesComponent {
       fd.append('file', this.selectedFile as Blob, this.selectedFile?.name);
       // console.log("FormData to be uploaded after file set:", fd.value);
 
-      alert(window.localStorage.getItem('username'));
+
 
       this.pendingCaseService.upload_pending_cases(fd).subscribe({
         next: (resp: any) => {

@@ -11,22 +11,12 @@ export class PendingCaseReportsService{
 
     get_monthly_pending_cases(month: string, year: number, civil_criminal: string, org_id:number): Observable<any[]>{
 
-        const url = `${serverURL}/v1/reports/cis/report/pending?criminal_civil_flag=${civil_criminal}&month=${month}&year=${year}&org_id=${org_id}`;
+        const url = `${serverURL}/v2/report/pending/cases/get/for/hcs?criminal_civil_flag=${civil_criminal}&report_month=${month}&report_year=${year}&organization=${org_id}`;
         console.log('Pending case url is ',url)
-        return this.http.get<{ data: any[] }>(url)
-            .pipe(
-                map(response => response.data.flatMap((caseItem: any) =>
-                    caseItem.data.map((item: any) => castAsMonthlyCasesReportViewModel(item))
-                )),
-                // catchError((error)=>{
-                //     alert("Server error")
-                //     return of(dummydata.flatMap((caseItem: any) =>
-                //         caseItem.data.map((item: any) => castAsMonthlyCasesReportViewModel(item))
-                //     ));
-                // })
-            );
+        return this.http.get<any>(url)
 
-            
+
+
     }
 
     get_yearwise_pending_cases(pending_since: number, civil_criminal: string, org_id: number): Observable<any[]> {
@@ -50,7 +40,7 @@ export class PendingCaseReportsService{
     }
 
     getOrganizations() {
-        return this.http.get<any>(`${serverURL}/v1/auth/organization/`);
+        return this.http.get<any>(`${serverURL}/v2/organization/`);
     }
 
 

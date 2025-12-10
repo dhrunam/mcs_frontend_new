@@ -24,7 +24,7 @@ export interface DisposedCasesReport {
 export function castAsDisposedCasesReportViewModel(data: any): DisposedCasesReport {
   console.log("Data passed..:", data);
   return {
-        case_type: data.case_type ?? 0,  // Default to 0 if missing
+        case_type: data.case_type ?? "",  // Default to 0 if missing
         type_name: data.related_casetype.desc_case ?? '',  // Default to empty string if missing
         pet_name: data.petitioner ?? '',  // Default to empty string if missing
         res_name: data.responder ?? '',  // Default to empty string if missing

@@ -8,7 +8,7 @@
     <div class="row g-3 mb-0">
         <form #filter="ngForm" (ngSubmit)="onSubmit(filter)">
         <div class="row g-3  d-flex align-items-start">
-           
+
             <div class="col-3 col-lg-2">
 
                 <label for="month" class="form-label ">Month <span class="text-danger">*</span></label>
@@ -42,19 +42,19 @@
                 </select>
                 <small class="text-danger" *ngIf="year.touched && year.invalid">select a year</small>
             </div>
-            <!-- <div class="col-3 col-lg-2">
-                <label for="year" class="form-label ">User <span class="text-danger">*</span></label>
-                <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''" [disabled]="showLoader"
+            <div class="col-3 col-lg-2">
+                <label for="year" class="form-label "> Organization <span class="text-danger">*</span></label>
+                <select class="form-select shadow-none" name="organization" #organization="ngModel" [ngModel]="filterData && filterData.user || ''" [disabled]="showLoader"
                     (change)="ResetReport()" required>
-                    <option value="">---Select User---</option>
-                    <option *ngFor="let user of userList" [value]="user.id">
-                        {{ user.username }}
+                    <option value="">---Select Organization---</option>
+                    <option *ngFor="let org of organisationList" [value]="org.id">
+                        {{ org.organization_name }}
                     </option>
                 </select>
-                <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
-            </div> -->
-           
-    
+                <small class="text-danger" *ngIf="organization.touched && organization.invalid">Select an Organization</small>
+            </div>
+
+
             <div class="col-3 col-lg-2  mt-0 d-flex align-items-end mt-lg-5">
                 <button class="btn btn-primary" type="submit" [disabled]="showLoader" >
                     @if(showLoader){
@@ -65,12 +65,12 @@
                     }
                 </button>
             </div>
-           
+
         </div>
          </form>
     </div>
 
-       
+
         <div *ngIf="courtFees" class="row g-3 mt-4 mb-0" id="table-to-pdf">
             <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
             <span class="text-center" >
@@ -82,33 +82,34 @@
                         <th>Sl No.</th>
                         <th>COURT FEES</th>
                         <th>COURT FINES</th>
-                        <th>BANK RECEIPT</th>
+                        <th>Misc. FEES</th>
                         <th>TOTAL</th>
                     </tr>
                 </thead>
                  <tbody>
-                    @if(courtFees && courtFees.length>0){
-                        @for(d of courtFees;track d ; let i=$index){
+                    @if(courtFees && courtFees.results.length>0){
+                        @for(d of courtFees.results;track d ; let i=$index){
                         <tr>
                             <td width="10">{{i+1}}</td>
                             <!-- <td width="80">{{d.type_name}} No. {{d.reg_year}}</td> -->
-                            <td>{{d.type_name}} No.{{d.reg_no}} of {{d.reg_year}} <br/>{{d.pet_name}} Vrs.  {{d.res_name}} <br> </td>
-                            <td>@if(d.other_fees){
-                                <span>{{d.other_fees}}</span>
-                             }
-                            @else{
-                                <span>Nil</span>
-                            } 
-                        </td>
-                        <td>Dummy data</td>
-                        <td>₹{{ (d.court_fees ?? 0) + (d.other_fees ?? 0) }}/-</td>
+                            <td>{{d.court_fees_collected}} </td>
+                            <td>{{d.fines_collected}}
+
+                            </td>
+                            <td>{{d.misc_collected}}</td>
+                            <td>₹ {{
+                                    +( (d.court_fees_collected) ?? 0 ) +
+                                    +( (d.fines_collected) ?? 0 ) +
+                                    +( (d.misc_collected) ?? 0 )
+                                  }} /-
+                              </td>
                         </tr>
                     }
                     }
-                    @else{                       
+                    @else{
                     <tr class="text-center" ><td colspan="3" class="text-secondary">No record found</td></tr>
                     }
-                    
+
                 </tbody>
             </table>
         </div>

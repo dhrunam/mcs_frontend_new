@@ -57,12 +57,12 @@
                 <label for="year" class="form-label ">Organization<span class="text-danger">*</span></label>
                 <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''"
                     [disabled]="showLoader" (change)="ResetReport()" required>
-                    <option value="">---Select User---</option>
+                    <option value="">---Select Organization---</option>
                     <option *ngFor="let org of organisationList" [value]="org.id">
                         {{org.organization_name}}
                     </option>
                 </select>
-                <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
+                <small class="text-danger" *ngIf="user.touched && user.invalid">select a organization</small>
             </div>
 
 
@@ -82,7 +82,7 @@
                 <label for="year" class="form-label ">Filter <span class="text-danger"><i class="bi bi-filter"></i></span></label>
                 <select class="form-select shadow-none" name="case_type_name" #case_type_name="ngModel"
                     (change)="filterDataByTypeName($event)" [ngModel]="filterData && filterData.case_type_name || ''"
-                    [disabled]="showLoader">
+                    [disabled]="false">
                     <option value="">-- Case Type Name --</option>
                     <option *ngFor="let case of casetypeNames" [value]="case">
                         {{ case }}
@@ -95,13 +95,13 @@
     </div>
 
 
-        <div *ngIf="disposedTransferredCases" class="row g-3 mt-4 mb-0" id="table-to-pdf">
+        <div  class="row g-3 mt-4 mb-0" id="table-to-pdf">
             <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
             <span class="text-center" >
                 <h5>LIST OF  DISPOSED/TRANSFERRED CASES IN {{filteredOrganization | uppercase}}, SIKKIM
                     <br/> FOR THE MONTH OF {{selectedMonth | uppercase}}, {{year.value}}</h5>
             </span>
-            <table class="table table-bordered" *ngIf="disposedTransferredCases">
+            <table class="table table-bordered" >
                 <thead class="table-header">
                     <tr>
                         <th>Sl No.</th>
@@ -110,13 +110,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if(disposedTransferredCases && disposedTransferredCases.length>0){
-                        @for(d of disposedTransferredCases;track d ; let i=$index){
+                   @if (disposedTransferredCases) {
+                      @for(d of disposedTransferredCases.results;track d ; let i=$index){
                         <tr>
                             <td width="10">{{i+1}}</td>
-                            <td width="80">{{d.type_name}} No. {{d.goshwara_no}} of {{d.reg_year}} <br /> {{d.pet_name}} <br /> Vrs. <br /> {{d.res_name}}</td>
-                            <td width="10">Contested ({{d.date_of_decision}}) <br/> on  {{d.transfer_est}}</td>
-                        </tr>
+                            <td width="80">{{d.case_type}} No. {{d.case_no}} of {{d.case_title}} <br /> {{d.petitioner}} <br /> Vrs. <br /> {{d.res_name}}</td>
+                            <!-- <td width="10">Contested ({{d.date_of_decision}}) <br/> on  {{d.transfer_est}}</td> -->
+                             <td width="10"> </td>
+                          </tr>
                     }
                     }
                     @else{

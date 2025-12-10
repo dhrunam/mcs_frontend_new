@@ -8,6 +8,7 @@ import { LocalStorageService } from '../../auth/local-storage/local-storage.serv
 import AOS from 'aos';
 import { catchError, throwError } from 'rxjs';
 import { ToastComponent } from '../shared/components/toast/toast.component';
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-submit-monthly-statement',
   standalone: true,
@@ -18,7 +19,9 @@ import { ToastComponent } from '../shared/components/toast/toast.component';
 export class SubmitMonthlyStatementComponent {
   constructor(private submitMonthlyStatementService: SubmitMonthlyStatementService,
     private authService: AuthService,
-    private localStorageService: LocalStorageService) { }
+    private localStorageService: LocalStorageService,
+    private cdr: ChangeDetectorRef
+  ) { }
   showLoader: boolean = false;
   isChecked: boolean = false;
   selectedMonth: string = '';
@@ -198,6 +201,7 @@ export class SubmitMonthlyStatementComponent {
   }
 
   LoadMonthlyStatement(): void {
+     this.showLoader = true;
     if (this.selectedMonth === '') {
       alert('Please select a month.');
       return;
@@ -251,6 +255,7 @@ export class SubmitMonthlyStatementComponent {
           this.noOfWorkingDays = data[0].no_of_working_days;
           this.calculateGrandTotal(this.caseStatements);
           this.GetOldestCaseDetails(this.selectedMonth, this.selectedYear, this.loginUserInfo.related_profile.organization, this.seletedCivilCriminal);
+          this.cdr.detectChanges();
         }
         else {
           this.showLoader = false;
@@ -294,22 +299,28 @@ export class SubmitMonthlyStatementComponent {
                 this.calculateGrandTotal(this.caseStatements);
                 console.log("this.caseStatements:", this.caseStatements);
                 this.GetOldestCaseDetails(month, year, this.loginUserInfo.related_profile.organization, this.seletedCivilCriminal);
+                this.cdr.detectChanges();
               }
               else {
                 this.showErrorToast = true;
                 setTimeout(() => {
                   this.showErrorToast = false;
                 }, 3000)
+                this.cdr.detectChanges();
               }
             }
           }), catchError(err => {
             alert("An Unexpected Error Occoured");
+             this.showErrorToast = false;
+              this.cdr.detectChanges();
             return throwError(() => err);
           })
         }
       }
     }), catchError(err => {
       alert("An Unexpected Error Occoured");
+       this.showErrorToast = false;
+        this.cdr.detectChanges();
       return throwError(() => err);
     })
   }

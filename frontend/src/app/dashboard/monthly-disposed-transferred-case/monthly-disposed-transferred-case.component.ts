@@ -178,7 +178,7 @@ export class MonthlyDisposedTransferredCaseComponent {
         // Use server-provided timestamp if available, otherwise use local time
         const uploadedAt = resp && (resp.uploaded_at || resp.created_at || resp.timestamp) ? (resp.uploaded_at || resp.created_at || resp.timestamp) : new Date().toLocaleString();
         // this.lastUploadedReport = { month: String(month), year: String(year), uploaded_at: uploadedAt };
-        debugger;
+
         this.LoadLastUploadedData();
         this.showLoader = false;
       },

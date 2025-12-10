@@ -3,7 +3,7 @@
         <h4>Monthly Case Statement Report</h4>
     </header>
     <hr>
-   
+
     <!-- <span class="text-center"><h5></h5></span> -->
 
     <div class="row g-3 mb-0">
@@ -43,12 +43,14 @@
                             <option value="criminal">Criminal</option>
                     </select>
                 </div>
+
+
                 <div class="col-3 col-lg-2">
-                    <label for="year" class="form-label ">User <span class="text-danger">*</span></label>
-                    <select class="form-select shadow-none" name="user" [(ngModel)]="selectedUser" [disabled]="showLoader" (change)="ResetReport()">
-                        <option value="">---Select User---</option>
-                            <option *ngFor="let user of userList" [value]="user.id">
-                                {{ user.username }}
+                    <label for="year" class="form-label ">Organization <span class="text-danger">*</span></label>
+                    <select class="form-select shadow-none" name="user" [(ngModel)]="selectedOrganization" [disabled]="showLoader" (change)="OnOrganizationChange($event)">
+                        <option value="">---Select Organization---</option>
+                            <option *ngFor="let org of organisationList" [value]="org.id">
+                                {{ org.organization_name }}
                               </option>
                     </select>
                 </div>
@@ -141,7 +143,7 @@
                     </td>
                     <td>
                        {{c.remarks}}
-                    </td>                
+                    </td>
                 </tr>
                 }
                 <tr>
@@ -158,7 +160,7 @@
                     <td class="text-center fw-bold"></td>
                     <td class="text-center fw-bold">{{grandTotal.unit}}</td>
                     <td class="text-center fw-bold">{{grandTotal.no_of_working_days}}</td>
-                    <td class="text-center fw-bold"></td>                
+                    <td class="text-center fw-bold"></td>
                 </tr>
             </tbody>
         </table>
@@ -169,5 +171,5 @@
             <button *ngIf="caseStatements.length > 0" class="btn btn-primary btn-lg w-100" (click)="GenerateReport()">Export as PDF <i class="bi bi-file-pdf"></i></button>
         </div>
     </div>
-    
+
 </div>

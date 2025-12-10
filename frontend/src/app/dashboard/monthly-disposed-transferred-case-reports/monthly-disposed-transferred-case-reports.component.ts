@@ -9,6 +9,7 @@ import { DisposedTransferredReportService } from './disposed-transferred-service
 import { HttpParams } from '@angular/common/http';
 import { Filter } from '../shared/interfaces/filter.interface';
 import { DisposedCasesReport, dummydata } from '../../shared/interfaces/disposed-transferred-case.interface';
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-monthly-disposed-transferred-case',
   standalone: true,
@@ -24,12 +25,12 @@ export class MonthlyDisposedTransferredCaseReportsComponent {
   organisationList: any = [];
   showLoader: boolean = false;
   selectedMonth:string=''
-  
+
 
 
   filteredOrganization:string=''
   filterData: any;
-  disposedTransferredCases: DisposedCasesReport [] |null=null;
+  disposedTransferredCases: any |null=null;
   alldisposedTransferredCases: DisposedCasesReport[]=[]
   months: string[] = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -41,8 +42,12 @@ export class MonthlyDisposedTransferredCaseReportsComponent {
 
 
 
-  constructor(private authService: AuthService, private disposedTransferredService: DisposedTransferredReportService,
-    private localStorageService: LocalStorageService){}
+  constructor(private authService: AuthService,
+    private disposedTransferredService: DisposedTransferredReportService,
+    private localStorageService: LocalStorageService,
+    private cdr: ChangeDetectorRef,
+
+  ){}
 
 
   ngOnInit(): void {
@@ -79,7 +84,7 @@ export class MonthlyDisposedTransferredCaseReportsComponent {
     return years;
   }
 
-  
+
 
   // GetOrganizationList() {
   //   this.disposedTransferredService.GetOrganizations().subscribe({
@@ -123,15 +128,17 @@ export class MonthlyDisposedTransferredCaseReportsComponent {
         data => {
           this.disposedTransferredCases = data;
           this.alldisposedTransferredCases=data;
-          this.casetypeNames = ['All', ...new Set(this.disposedTransferredCases.map(caseItem => caseItem.type_name))];
+          // this.casetypeNames = ['All', ...new Set(this.disposedTransferredCases.map(caseItem => caseItem.case_type))];
           this.selectedMonth = this.months[formdata.value.month - 1]
           console.log("Dispose data is ", data)
           // if(this.disposedTransferredCases.length==0){
             // this.disposedTransferredCases=dummydata.flatMap(caseItem=> caseItem.data)
           // }
           this.showLoader=false
+          this.cdr.detectChanges()
+
         }
-      )  
+      )
       // this.disposedTransferredCases = dummydata.flatMap(caseItem => caseItem.data)
       // this.showLoader=false
     }

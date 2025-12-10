@@ -47,13 +47,20 @@ export class UploadStatementOfCourtFeesOrFinesComponent {
 
   onFileSelected(e: Event) {
     const input = e.target as HTMLInputElement;
+    if(input)
+    {
     if (input.files && input.files.length) {
       this.selectedFile = input.files[0];
       this.uploadMessage = this.selectedFile.name;
     } else {
       this.selectedFile = null;
-      this.uploadMessage = '';
+      this.uploadMessage = 'Please select a file to upload.';
     }
+  }
+  else{
+    this.selectedFile = null;
+    this.uploadMessage = 'This feild is required.';
+  }
   }
 
   LoadLastUploadedData() {
@@ -73,9 +80,12 @@ export class UploadStatementOfCourtFeesOrFinesComponent {
   }
 
   onUpload(form: NgForm) {
-    if (!form || form.invalid) {
+    if (form.invalid) {
       form.control.markAllAsTouched && form.control.markAllAsTouched();
-      this.uploadMessage = 'Select month, year and case type before uploading.';
+      if(!this.selectedFile){
+        this.uploadMessage = 'Please select a file to upload.';
+      }
+      // this.uploadMessage = 'Select month, year and case type before uploading.';
       return;
     }
     if (!this.selectedFile) {
@@ -85,8 +95,8 @@ export class UploadStatementOfCourtFeesOrFinesComponent {
 
     const month = form.value.month;
     const year = form.value.year;
-    const case_type = form.value.case_type;
-    if (!month || !year || !case_type) {
+    // const case_type = form.value.case_type;
+    if (!month || !year ) {
       this.uploadMessage = 'Select month, year and case type before uploading.';
       return;
     }
@@ -96,7 +106,7 @@ export class UploadStatementOfCourtFeesOrFinesComponent {
     fd.append('username', this.localStorageService.getUserName() || '');
     fd.append('report_month', month);
     fd.append('report_year', year);
-    fd.append('civil_criminal', case_type);
+    // fd.append('civil_criminal', case_type);
     fd.append('file', this.selectedFile as Blob, this.selectedFile?.name);
 
     this.svc.upload_statement_of_court_fees(fd).subscribe({

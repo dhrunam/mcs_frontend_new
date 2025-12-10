@@ -11,6 +11,8 @@ import { Organization } from '../../shared/interfaces/organization';
 import { UserProfile } from '../../shared/interfaces/user-profile';
 import AOS from 'aos';
 import { Filter } from '../shared/interfaces/filter.interface';
+import { ChangeDetectorRef } from '@angular/core';
+
 @Component({
   selector: 'app-monthly-case-statement-report',
   standalone: true,
@@ -21,11 +23,14 @@ import { Filter } from '../shared/interfaces/filter.interface';
 export class MonthlyCaseStatementReportComponent {
   constructor(private submitMonthlyStatementService: SubmitMonthlyStatementService,
     private authService: AuthService,
-    private localStorageService: LocalStorageService){}
+    private localStorageService: LocalStorageService,
+    private cdr: ChangeDetectorRef
+  ){}
 isChecked: boolean = false;
 selectedMonth:string = '';
 selectedYear:number = 0;
 selectedUser:string='';
+selectedOrganization:string='';
 years: number[] = [];
 currentYear: number = new Date().getFullYear();
 username:string = this.localStorageService.getUserName();
@@ -113,7 +118,7 @@ calculateTotal(rowData:any, value:any){
       rowData.no_of_working_days = 0;
       return;
     }
-  
+
   rowData.total_count = rowData.pending_start_of_month + rowData.instituted_during_the_month;
   rowData.pending_in_hand = rowData.total_count - (rowData.count_disposed_contested+rowData.count_disposed_uncontested+rowData.count_disposed_transferred);
   this.calculateGrandTotal(this.caseStatements);
@@ -146,7 +151,7 @@ calculateGrandTotal(data:any)
     this.grandTotal.pending_more_then_2yrs+=el.pending_more_then_2yrs;
     this.grandTotal.pending_more_then_4yrs+=el.pending_more_then_4yrs;
     this.grandTotal.unit+=el.unit;
-    this.grandTotal.no_of_working_days=el.no_of_working_days;    
+    this.grandTotal.no_of_working_days=el.no_of_working_days;
   });
 }
 
@@ -179,9 +184,9 @@ LoadMonthlyStatement(): void{
     alert('Please select a year.');
     return;
   }
-  if(this.selectedUser == '')
+  if(this.selectedOrganization == '')
   {
-    alert('Please select a user');
+    alert('Please select an Organization');
     return;
   }
   if(this.selectedCivilCriminal == '')
@@ -190,22 +195,22 @@ LoadMonthlyStatement(): void{
     return;
   }
 
-  this.filteredUser = this.userList.filter((u: UserProfile)=> u.id === parseInt(this.selectedUser))[0];
-  this.filteredOrganization = this.organisationList.filter((o: Organization) => o.id === parseInt(this.filteredUser.related_profile.organization))[0];
-  
+  // this.filteredUser = this.userList.filter((u: UserProfile)=> u.id === parseInt(this.selectedUser))[0];
+  // this.filteredOrganization = this.organisationList.filter((o: Organization) => o.id === parseInt(this.filteredUser.related_profile.organization))[0];
 
-  console.log("this.filteredOrganization:",this.filteredOrganization);
-  console.log("his.filteredUser:",this.filteredUser);
 
-  this.submitMonthlyStatementService.GetMonthlyCaseStatementReport(this.selectedMonth,this.selectedYear,this.selectedUser,this.selectedCivilCriminal).subscribe({
-    next: data => {  
+  // console.log("this.filteredOrganization:",this.filteredOrganization);
+  // console.log("his.filteredUser:",this.filteredUser);
+
+  this.submitMonthlyStatementService.GetMonthlyCaseStatementReport(this.selectedMonth,this.selectedYear,this.selectedOrganization,this.selectedCivilCriminal).subscribe({
+    next: data => {
       this.caseStatements = [];
-      this.ClearGrandTotal();      
+      this.ClearGrandTotal();
       if(data && data.length > 0)
       {
         console.log("monthly statement fetched",data);
         let result = [];
-        result = data;        
+        result = data;
         result.forEach((el:CaseStatement) => {
           const caseState = {
             id: el.report_id,
@@ -234,6 +239,7 @@ LoadMonthlyStatement(): void{
         this.calculateGrandTotal(this.caseStatements);
         console.log("this.caseStatements:",this.caseStatements);
         this.showLoader = false;
+        this.cdr.detectChanges();
       }
       else{
         alert("No Records Found");
@@ -279,7 +285,7 @@ GenerateReport() {
 GetOrganizationList()
 {
   this.submitMonthlyStatementService.GetOrganizations().subscribe({
-    next: data => {  
+    next: data => {
       console.log("GetOrganizationList:",data);
       this.organisationList = data;
     }
@@ -299,6 +305,18 @@ GetAllUserList()
 ResetReport()
 {
   this.caseStatements = [];
+}
+
+OnOrganizationChange(event: Event){
+  this.ResetReport();
+  const value = (event.target as HTMLSelectElement).value;
+  console.log('Selected value:', value);
+  this.submitMonthlyStatementService.GetOrganization(parseInt(value)).subscribe({
+    next: data => {
+      this.filteredOrganization = data;
+      console.log("this.filteredOrganization:",this.filteredOrganization);
+    }
+  });
 }
 
 

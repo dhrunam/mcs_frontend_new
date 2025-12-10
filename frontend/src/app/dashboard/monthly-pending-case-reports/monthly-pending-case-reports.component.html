@@ -57,12 +57,12 @@
                 <label for="year" class="form-label ">Organization<span class="text-danger">*</span></label>
                 <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''"
                     [disabled]="showLoader" (change)="ResetReport()" required>
-                    <option value="">---Select User---</option>
+                    <option value="">---Select Organization---</option>
                     <option *ngFor="let org of organisationList" [value]="org.id">
                         {{org.organization_name}}
                     </option>
                 </select>
-                <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
+                <small class="text-danger" *ngIf="user.touched && user.invalid">Select an Organnization</small>
             </div>
 
 
@@ -116,20 +116,18 @@
                     </tr>
                 </thead>
                  <tbody>
-                    @if(pendingCases && pendingCases.length>0){
-                        @for(d of pendingCases;track d ; let i=$index){
+                    @if(pendingCases){
+                        @for(d of pendingCases.results;track d ; let i=$index){
                         <tr>
                             <td width="10">{{i+1}}</td>
-                            <td>{{d.dt_regis}}</td>
-                            <td width="80"> Case No. {{d.reg_no}} of {{d.reg_year}}</td>
-                            <td>{{d.pet_name}} <br/> Vrs. <br/>  <span *ngIf="d.ext_respondents?.length ?? 0 > 0">1.</span> {{d.res_name}} <br> <span *ngFor="let item of d.ext_respondents; let j = index">
-                                {{ j + 2 }}. {{ item.respondent }}<br>
-                              </span>  {{d.act_section?.[0]?.act_section}}
+                            <td>{{d.date_of_inst}}</td>
+                            <td width="80"> Case No. {{d.case_no}}</td>
+                            <td>{{d.case_title}}
                             </td>
-                            <td>{{d.type_name}}</td>
+                            <td>{{d.case_type}}</td>
                             <!-- <td>Out of - PW's <br> -Pws examined</td> -->
-                             <td> {{d.act_section?.[0]?.act_section}}</td>
-                            <td>     {{d.purpose_name}}</td>
+                             <td> {{d.brief_note}}</td>
+                            <td>     {{d.status}}</td>
                         </tr>
                     }
                     }

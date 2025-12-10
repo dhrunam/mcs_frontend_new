@@ -71,7 +71,7 @@
             <tbody>
               @for (item of lastUploadedReport.results; track item.id) {
                 <tr>
-                  <td>{{ item.report_month | date: 'MMMM' }}</td>
+                  <td>{{ item.report_month }}</td>
                   <td>{{ item.report_year }}</td>
                   <td>{{ item.updated_at | date: 'dd MMMM,yyyy' }} at {{ item.updated_at | date: 'hh:mm a'}} </td>
                 </tr>
