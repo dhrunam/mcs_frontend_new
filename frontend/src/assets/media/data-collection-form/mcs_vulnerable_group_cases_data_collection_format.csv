@@ -1,0 +1,4 @@
+id,date_of_inst,case_no,case_title,case_type,civil_criminal,brief_note,status,vulnerable_group,report_year,report_month,created_at,updated_at,created_by_id,organization_id,updated_by_id
+1,2010-11-05,Wpc-2010100121200,test,MACT AT,civil,test,NA,Old age,2025,11,2025-12-08 17:32:13.44374+05:30,2025-12-08 17:32:13.443774+05:30,23,16,
+2,2012-11-05,Wpc-2010100121222,test,MACT AT,civil,test,NA,minor,2024,11,2025-12-08 17:34:55.401523+05:30,2025-12-08 17:34:55.401687+05:30,23,16,
+3,2012-09-05,Wpc-2010100121223,test,MACT AT,civil,test,NA,differently abled,2025,11,2025-12-08 17:38:24.784817+05:30,2025-12-08 17:38:24.784887+05:30,23,16,

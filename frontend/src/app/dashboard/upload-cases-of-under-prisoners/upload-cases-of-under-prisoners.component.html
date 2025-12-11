@@ -1,6 +1,11 @@
 <div data-aos="fade-right" data-aos-duration="500">
   <header class="d-flex justify-content-between align-items-center">
-    <h4>Upload List of Under Trial Prisoners Cases</h4>
+     <div class="col-6">
+        <h4>Upload List of Under Trial Prisoners Cases</h4>
+      </div>
+        <div class="col-6">
+        <a href="assets/media/data-collection-form/mcs_under_trial_prisoners_data_collection_format.csv" target="_blank"> Download sample csv file for data upload</a>
+      </div>
   </header>
   <hr />
 
@@ -37,7 +42,7 @@
         <label class="form-label">Upload File</label>
         <div class="d-flex gap-2 align-items-center">
           <input type="file" class="form-control form-control-sm" (change)="onFileSelected($event)" />
-          <button class="btn btn-outline-primary btn-sm" type="button" (click)="onUpload(filter)">Upload</button>
+          <button class="btn btn-outline-primary btn-sm" type="button" (click)="onUpload(filter)"> <i class="bi bi-floppy"></i>Upload</button>
         </div>
         <small class="text-muted" *ngIf="uploadMessage">{{ uploadMessage }}</small>
       </div>
