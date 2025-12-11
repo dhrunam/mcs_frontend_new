@@ -37,7 +37,7 @@ export class SubmitMonthlyStatementComponent {
   userList: any = [];
   showErrorToast: boolean = false;
   selectedFile: File | null = null;
-  seletedCivilCriminal: string = '';
+  selectedCivilCriminal: string = '';
   loginUserInfo: any = [];
 
   caseTypeList: any = [];
@@ -48,6 +48,8 @@ export class SubmitMonthlyStatementComponent {
   dateOfInstitution: Date = new Date();
   oldestCaseStatus: string = ''
   oldestCaseId: number = 0;
+  filteredOrganization:any;
+
 
   ngOnInit(): void {
     AOS.init();
@@ -77,6 +79,15 @@ export class SubmitMonthlyStatementComponent {
     });
   }
 
+  GetOrganization(orgId:number){
+    this.submitMonthlyStatementService.GetOrganization(orgId).subscribe({
+      next: data => {
+        this.filteredOrganization = data;
+        console.log("this.filteredOrganization:",this.filteredOrganization);
+      }
+    });
+  }
+
   GetCaseTypes() {
     this.submitMonthlyStatementService.GetCaseTypes(this.loginUserInfo.groups[0].name).subscribe({
       next: data => {
@@ -90,6 +101,7 @@ export class SubmitMonthlyStatementComponent {
     this.authService.getLoginUserInfo().subscribe({
       next: data => {
         this.loginUserInfo = data;
+        this.GetOrganization(this.loginUserInfo.related_profile.organization);
         console.log("GetLoginUserInfo():", this.loginUserInfo);
         if (this.loginUserInfo) {
           this.GetCaseTypes();
@@ -210,14 +222,14 @@ export class SubmitMonthlyStatementComponent {
       alert('Please select a year.');
       return;
     }
-    if (this.seletedCivilCriminal == '') {
+    if (this.selectedCivilCriminal == '') {
       alert('Please select a case type.');
       return;
     }
 
     console.log(this.getPreviousMonthAndYear(this.selectedMonth, this.selectedYear));
     // this.showLoader = true;
-    this.submitMonthlyStatementService.GetDraftMonthlyStatement(this.selectedMonth, this.selectedYear, this.seletedCivilCriminal).subscribe({
+    this.submitMonthlyStatementService.GetDraftMonthlyStatement(this.selectedMonth, this.selectedYear, this.selectedCivilCriminal).subscribe({
       next: data => {
         this.showLoader = false;
         console.log("Get monthly statement:", data);
@@ -254,7 +266,7 @@ export class SubmitMonthlyStatementComponent {
           });
           this.noOfWorkingDays = data[0].no_of_working_days;
           this.calculateGrandTotal(this.caseStatements);
-          this.GetOldestCaseDetails(this.selectedMonth, this.selectedYear, this.loginUserInfo.related_profile.organization, this.seletedCivilCriminal);
+          this.GetOldestCaseDetails(this.selectedMonth, this.selectedYear, this.loginUserInfo.related_profile.organization, this.selectedCivilCriminal);
           this.cdr.detectChanges();
         }
         else {
@@ -263,7 +275,7 @@ export class SubmitMonthlyStatementComponent {
           let previousMonthDetails = this.getPreviousMonthAndYear(this.selectedMonth, this.selectedYear);
           let month = previousMonthDetails.month;
           let year = previousMonthDetails.year;
-          this.submitMonthlyStatementService.GetMonthlyStatement(month, year, this.seletedCivilCriminal).subscribe({
+          this.submitMonthlyStatementService.GetMonthlyStatement(month, year, this.selectedCivilCriminal).subscribe({
             next: data => {
               console.log("Get previous monthly statement:", data);
               this.ClearGrandTotal();
@@ -298,7 +310,7 @@ export class SubmitMonthlyStatementComponent {
                 });
                 this.calculateGrandTotal(this.caseStatements);
                 console.log("this.caseStatements:", this.caseStatements);
-                this.GetOldestCaseDetails(month, year, this.loginUserInfo.related_profile.organization, this.seletedCivilCriminal);
+                this.GetOldestCaseDetails(month, year, this.loginUserInfo.related_profile.organization, this.selectedCivilCriminal);
                 this.cdr.detectChanges();
               }
               else {
@@ -541,6 +553,19 @@ export class SubmitMonthlyStatementComponent {
     }
     return true;
   }
+
+
+OnOrganizationChange(event: Event){
+  this.ResetReport();
+  const value = (event.target as HTMLSelectElement).value;
+  console.log('Selected value:', value);
+  this.submitMonthlyStatementService.GetOrganization(parseInt(value)).subscribe({
+    next: data => {
+      this.filteredOrganization = data;
+      console.log("this.filteredOrganization:",this.filteredOrganization);
+    }
+  });
+}
 
 
 

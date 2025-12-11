@@ -1,2 +1,2 @@
-id,case_no,petitioner,responder,case_title,case_type,disposed_transfered,remarks,goshwara_no
-1,Wpc-2024-5002,test petitioner,test responder,Wpc-2024 test petitioner vs test responder,MACT,disposed,test,wp8002
+id,case_no,petitioner,responder,case_title,case_type,disposed_transfered,remarks
+1,Wpc-2024-5002,test petitioner,test responder,Wpc-2024 test petitioner vs test responder,MACT,disposed,test
