@@ -8,7 +8,7 @@ import { LocalStorageService } from '../../auth/local-storage/local-storage.serv
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SeniorCitizenCasesService } from './senior-citizen-pending-cases.services';
-
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-senior-citizen-pending-cases',
   standalone: true,
@@ -25,18 +25,19 @@ export class SeniorCitizenPendingCasesComponent {
   organisationList: any = [];
   showLoader: boolean = false;
 
-
-
   lastDateOfMonth: any = ''
   filterData: any;
-  seniorCitizenPendingCases: PendingSeniorCitizenCase[] | null = null;
-  allSeniorCitizenPendingCases: PendingSeniorCitizenCase[] =[]
+  seniorCitizenPendingCases: any | null = null;
+  allSeniorCitizenPendingCases: any =[]
   casetypeNames: string[] = []
   defaultSelectedOrgId: number | null = null
   filteredOrganization: string = ''
 
-  constructor(private authService: AuthService, private seniorCitizenPendingCaseservice: SeniorCitizenCasesService,
-    private localStorageService: LocalStorageService) { }
+  constructor(private authService: AuthService,
+    private seniorCitizenPendingCaseservice: SeniorCitizenCasesService,
+    private localStorageService: LocalStorageService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
 
   ngOnInit(): void {
@@ -53,7 +54,6 @@ export class SeniorCitizenPendingCasesComponent {
       next: data => {
         console.log("GetOrganizationList:", data);
         this.organisationList = data;
-
       }
     });
   }
@@ -95,7 +95,7 @@ export class SeniorCitizenPendingCasesComponent {
 
 
   onSubmit(formdata: NgForm) {
-    var org_id = formdata.value.user
+    var org_id = formdata.value.organization
     if (formdata.invalid)
     {
       formdata.control.markAllAsTouched()
@@ -110,18 +110,24 @@ export class SeniorCitizenPendingCasesComponent {
       }
       this.filteredOrganization = (this.organisationList as any[]).find(x => x.id == org_id
       )?.organization_name ?? '';
-      this.seniorCitizenPendingCaseservice.get_pending_senior_citizen_case(formdata.value.month, formdata.value.year,formdata.value.user,formdata.value.case_type).subscribe(
+      this.seniorCitizenPendingCaseservice.get_pending_senior_citizen_case(formdata.value.month, formdata.value.year,org_id,formdata.value.case_type).subscribe(
         data => {
           this.seniorCitizenPendingCases = data;
           this.allSeniorCitizenPendingCases = data;
-          
-          this.casetypeNames = ['All', ...new Set(this.seniorCitizenPendingCases.map(caseItem => caseItem.type_name))];
+
+          // this.casetypeNames = ['All', ...new Set(this.seniorCitizenPendingCases.map(caseItem => caseItem.type_name))];
           console.log("Senior citizen pending case list data is ", data)
           this.lastDateOfMonth = this.getLastDateOfMonth(Number(formdata.value.month), Number(formdata.value.year));
           // if(this.seniorCitizenPendingCases.length==0){
           // this.seniorCitizenPendingCases=dummydata.flatMap(caseItem=> caseItem.data)
           // }
-          this.showLoader = false
+          this.showLoader = false;
+          this.cdr.detectChanges();
+        },
+        error =>{
+          console.log(error)
+          this.showLoader = false;
+          this.cdr.detectChanges();
         }
       )
       // this.seniorCitizenPendingCases = dummydata.flatMap(caseItem => caseItem.data)

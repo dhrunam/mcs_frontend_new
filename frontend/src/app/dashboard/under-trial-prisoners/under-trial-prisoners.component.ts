@@ -8,7 +8,7 @@ import { LocalStorageService } from '../../auth/local-storage/local-storage.serv
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { UnderTrialService } from './under-trial-prisoner.services';
-
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-under-trial-prisoners',
   standalone: true,
@@ -29,8 +29,8 @@ export class UnderTrialPrisonersComponent {
 
   lastDateOfMonth:any=''
   filterData: Filter | any = null
-  underTrialPrisoners: UnderTrialPrisoner[] | null = null;
-  allUnderTrialPrisoners: UnderTrialPrisoner[] | null = null;
+  underTrialPrisoners: any | null = null;
+  allUnderTrialPrisoners: any | null = null;
   casetypeNames: string[] = []
 
   defaultSelectedOrgId: number | null = null
@@ -38,8 +38,11 @@ export class UnderTrialPrisonersComponent {
 
 
 
-  constructor(private authService: AuthService, private underTrialPrisonerservice: UnderTrialService,
-    private localStorageService: LocalStorageService) { }
+  constructor(private authService: AuthService,
+     private underTrialPrisonerservice: UnderTrialService,
+    private localStorageService: LocalStorageService,
+    private cdr : ChangeDetectorRef
+  ) { }
 
   filterDataByTypeName(event: any) {
     const selectedType = event.target.value
@@ -97,7 +100,7 @@ export class UnderTrialPrisonersComponent {
 
 
   onSubmit(formdata: NgForm) {
-    var org_id = formdata.value.user
+    var org_id = formdata.value.organization
     if (formdata.invalid)
     {
       formdata.control.markAllAsTouched()
@@ -113,21 +116,24 @@ export class UnderTrialPrisonersComponent {
       }
       this.filteredOrganization = (this.organisationList as any[]).find(x => x.id == org_id
       )?.organization_name ?? '';
+
       this.underTrialPrisonerservice.get_under_trial_prisoner_list(formdata.value.month, formdata.value.year, org_id).subscribe(
         data => {
           this.underTrialPrisoners = data;
           this.allUnderTrialPrisoners = data;
-          this.casetypeNames = ['All', ...new Set(this.underTrialPrisoners.map(caseItem => caseItem.type_name))];
+          // this.casetypeNames = ['All', ...new Set(this.underTrialPrisoners.map(caseItem => caseItem.type_name))];
           console.log("Under trial prisoner list data is ", data)
           this.lastDateOfMonth=this.getLastDateOfMonth(Number(formdata.value.month),Number(formdata.value.year));
           // if(this.underTrialPrisoners.length==0){
           // this.underTrialPrisoners=dummydata.flatMap(caseItem=> caseItem.data)
           // }
           this.showLoader = false
+          this.cdr.detectChanges()
         }
       )
       // this.underTrialPrisoners = dummydata.flatMap(caseItem => caseItem.data)
       this.showLoader = false
+      this.cdr.detectChanges()
     }
   }
 

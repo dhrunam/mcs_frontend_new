@@ -56,14 +56,14 @@
                 </div>
                 <div class="col-3 col-lg-2" *ngIf="username==='hcs_admin'">
                     <label for="year" class="form-label ">Organization <span class="text-danger">*</span></label>
-                    <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''"
+                    <select class="form-select shadow-none" name="organization" #organization="ngModel" [ngModel]="filterData && filterData.user || ''"
                         [disabled]="showLoader" (change)="ResetReport()" required>
                         <option value="">---Select User---</option>
                         <option *ngFor="let org of organisationList" [value]="org.id">
                             {{org.organization_name}}
                         </option>
                     </select>
-                    <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
+                    <small class="text-danger" *ngIf="organization.touched && organization.invalid">Select an Organization</small>
                 </div>
 
 
@@ -96,30 +96,33 @@
     </div>
 
 
-    <div *ngIf="seniorCitizenPendingCases" class="row g-3 mt-4 mb-0" id="table-to-pdf">
+    <div  class="row g-3 mt-4 mb-0" id="table-to-pdf">
         <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
-        <span class="text-center">
+          @if(seniorCitizenPendingCases){
+          <span class="text-center">
             <h5>LIST OF PENDING CASES IN {{filteredOrganization | uppercase}}, SIKKIM
                 <br/> IN WHICH THE PARTIES ARE ABOVE 60 YEARS OLD AS ON {{lastDateOfMonth && lastDateOfMonth}}.{{month.value}}.{{year.value}}
             </h5>
         </span>
+      }
         <table class="table table-bordered" *ngIf="seniorCitizenPendingCases">
             <thead class="table-header">
                 <tr>
-                    <th>Sl No.</th>
-                    <th>CAUSE TITLE</th>
-                    <th>STATUS REPORT</th>
+                         <th>Sl No.</th>
+                        <th>Case</th>
+                        <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                @if(seniorCitizenPendingCases && seniorCitizenPendingCases.length>0){
-                @for(d of seniorCitizenPendingCases;track d ; let i=$index){
+                @if(seniorCitizenPendingCases && seniorCitizenPendingCases.results){
+                @for(d of seniorCitizenPendingCases.results;track d ; let i=$index){
                 <tr>
-                    <td width="10">{{i+1}}</td>
-                    <!-- <td width="80">{{d.type_name}} No. {{d.reg_year}}</td> -->
-                    <td>{{d.type_name}} No.{{d.reg_no}} of {{d.reg_year}} <br />{{d.res_name}}<br>
-                    </td>
-                    <td>{{d.purpose_name}}</td>
+
+                            <td width="10">{{i+1}}</td>
+                            <td width="80">{{d.case_type}} No. {{d.case_no}} of {{d.case_title}} <br /> {{d.petitioner}} <br /> Vrs. <br /> {{d.res_name}}</td>
+                            <!-- <td width="10">Contested ({{d.date_of_decision}}) <br/> on  {{d.transfer_est}}</td> -->
+                             <td width="10"> </td>
+
                 </tr>
                 }
                 }

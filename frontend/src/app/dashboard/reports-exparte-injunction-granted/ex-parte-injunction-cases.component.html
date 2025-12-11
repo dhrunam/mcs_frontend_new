@@ -56,14 +56,14 @@
                 </div>
                 <div class="col-3 col-lg-2" *ngIf="username==='hcs_admin'">
                     <label for="year" class="form-label ">Organization <span class="text-danger">*</span></label>
-                    <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''"
+                    <select class="form-select shadow-none" name="organization" #organization="ngModel" [ngModel]="filterData && filterData.user || ''"
                         [disabled]="showLoader" (change)="ResetReport()" required>
                         <option value="">---Select User---</option>
                         <option *ngFor="let org of organisationList" [value]="org.id">
                             {{org.organization_name}}
                         </option>
                     </select>
-                    <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
+                    <small class="text-danger" *ngIf="organization.touched && organization.invalid">Select an Organization</small>
                 </div>
 
 
@@ -96,14 +96,15 @@
     </div>
 
 
-    <div *ngIf="exParteInjunctionCases" class="row g-3 mt-4 mb-0" id="table-to-pdf">
+    <div  class="row g-3 mt-4 mb-0" id="table-to-pdf">
+      @if(exParteInjunctionCases){
         <span class="text-center">
             <h5>LIST OF CASES IN {{filteredOrganization | uppercase}}, SIKKIM
                 <br/> WHERE EX PARTE INJUNCTION WAS GRANTED AS ON {{lastDateOfMonth && lastDateOfMonth}}.{{month.value}}.{{year.value}}
             </h5>
         </span>
-
-        <table class="table table-bordered" *ngIf="exParteInjunctionCases">
+      }
+        <table class="table table-bordered">
             <thead class="table-header">
                 <tr>
                     <th>Sl No.</th>
@@ -113,14 +114,13 @@
                 </tr>
             </thead>
             <tbody>
-                @if(exParteInjunctionCases && exParteInjunctionCases.length>0){
-                @for(d of exParteInjunctionCases;track d ; let i=$index){
+                @if(exParteInjunctionCases && exParteInjunctionCases.results){
+                @for(d of exParteInjunctionCases.results;track d ; let i=$index){
                 <tr>
                     <td width="10">{{i+1}}</td>
-                    <td>{{d.type_name}} No.{{d.reg_no}} of {{d.reg_year}} <br />{{d.res_name}}<br>
-                    </td>
-                    <td>{{d.injunction_granted_date | date: 'dd-MM-yyyy'}}</td>
-                    <td>{{d.purpose_name}}</td>
+                    <td>{{d.case_title}}</td>
+                    <td>{{d.date_of_inst | date: 'dd-MMMM-yyyy'}}</td>
+                    <td>{{d.status}}</td>
                 </tr>
                 }
                 }

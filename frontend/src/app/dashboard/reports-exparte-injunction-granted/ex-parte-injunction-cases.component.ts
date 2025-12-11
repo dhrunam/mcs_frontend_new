@@ -8,6 +8,7 @@ import { AuthService } from '../../auth/auth.service';
 import { LocalStorageService } from '../../auth/local-storage/local-storage.service';
 import { ExParteInjunctionCase } from './ex-parte-injunction-case.interface';
 import { ExParteInjunctionCasesService } from './ex-parte-injunction-cases.services';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-ex-parte-injunction-cases',
@@ -27,14 +28,17 @@ export class ExParteInjunctionCasesComponent implements OnInit {
 
   lastDateOfMonth: any = ''
   filterData: any;
-  exParteInjunctionCases: ExParteInjunctionCase[] | null = null;
-  allExParteInjunctionCases: ExParteInjunctionCase[] = []
+  exParteInjunctionCases: any | null = null;
+  allExParteInjunctionCases: any| null = null;
   casetypeNames: string[] = []
   defaultSelectedOrgId: number | null = null
   filteredOrganization: string = ''
 
-  constructor(private authService: AuthService, private exParteInjunctionCasesService: ExParteInjunctionCasesService,
-    private localStorageService: LocalStorageService) { }
+  constructor(private authService: AuthService,
+     private exParteInjunctionCasesService: ExParteInjunctionCasesService,
+    private localStorageService: LocalStorageService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     AOS.init();
@@ -74,7 +78,7 @@ export class ExParteInjunctionCasesComponent implements OnInit {
   }
 
   onSubmit(formdata: NgForm) {
-    var org_id = formdata.value.user
+    var org_id = formdata.value.organization
     if (formdata.invalid) {
       formdata.control.markAllAsTouched()
     }
@@ -87,19 +91,21 @@ export class ExParteInjunctionCasesComponent implements OnInit {
       this.filteredOrganization = (this.organisationList as any[]).find(x => x.id == org_id
       )?.organization_name ?? '';
 
-      this.exParteInjunctionCasesService.getExParteInjunctionCases(formdata.value.month, formdata.value.year, formdata.value.user, formdata.value.case_type).subscribe(
+      this.exParteInjunctionCasesService.getExParteInjunctionCases(formdata.value.month, formdata.value.year, formdata.value.organization, formdata.value.case_type).subscribe(
         data => {
           this.exParteInjunctionCases = data;
           this.allExParteInjunctionCases = data;
-          
-          this.casetypeNames = ['All', ...new Set(this.exParteInjunctionCases.map(caseItem => caseItem.type_name))];
+
+          // this.casetypeNames = ['All', ...new Set(this.exParteInjunctionCases.map(caseItem => caseItem.type_name))];
           console.log("Ex Parte Injunction case list data is ", data)
           this.lastDateOfMonth = this.getLastDateOfMonth(Number(formdata.value.month), Number(formdata.value.year));
-          this.showLoader = false
+          this.showLoader = false;
+          this.cdr.detectChanges();
         },
         error => {
           console.error("Error fetching ex parte injunction cases: ", error);
           this.showLoader = false;
+          this.cdr.detectChanges();
         }
       )
     }

@@ -45,14 +45,14 @@
                 </div>
                 <div class="col-3 col-lg-2" *ngIf="username==='hcs_admin'">
                     <label for="year" class="form-label ">Organization <span class="text-danger">*</span></label>
-                    <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''"
+                    <select class="form-select shadow-none" name="organization" #organization="ngModel" [ngModel]="filterData && filterData.user || ''"
                         [disabled]="showLoader" (change)="ResetReport()" required>
-                        <option value="">---Select User---</option>
+                        <option value="">---Select Organization---</option>
                         <option *ngFor="let org of organisationList" [value]="org.id">
                             {{org.organization_name}}
                         </option>
                     </select>
-                    <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
+                    <small class="text-danger" *ngIf="organization.touched && organization.invalid">Select an Organization</small>
                 </div>
 
 
@@ -87,12 +87,14 @@
     </div>
 
 
-    <div *ngIf="underTrialPrisoners" class="row g-3 mt-4 mb-0" id="table-to-pdf">
+    <div  class="row g-3 mt-4 mb-0" id="table-to-pdf">
         <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
+        @if(underTrialPrisoners){
         <span class="text-center">
             <h5>LIST OF UNDERTRIAL PRISONERS IN {{filteredOrganization | uppercase}}, SIKKIM
                 <br/>  AS ON {{lastDateOfMonth && lastDateOfMonth}}.{{month.value}}.{{year.value}}</h5>
         </span>
+      }
         <table class="table table-bordered" *ngIf="underTrialPrisoners">
             <thead class="table-header">
                 <tr>
@@ -110,19 +112,18 @@
                 </tr>
             </thead>
             <tbody>
-                @if(underTrialPrisoners && underTrialPrisoners.length>0){
-                @for(d of underTrialPrisoners;track d ; let i=$index){
+                @if(underTrialPrisoners){
+                @for(d of underTrialPrisoners.results;track d ; let i=$index){
                 <tr>
                     <td width="10">{{i+1}}</td>
                     <!-- <td width="80">{{d.type_name}} No. {{d.reg_year}}</td> -->
-                    <td>{{d.type_name}} No.{{d.reg_no}} of {{d.reg_year}} <br />{{d.pet_name}} Vrs. {{d.res_name}} <br>
-                    </td>
-                    <td>{{d.dt_regis}}</td>
-                    <td>{{d.pet_name}}</td>
-                    <td>Accd. {{d.res_name}}</td>
-                    <td></td>
-                    <td>Since {{d.arrest_date}}</td>
-                    <td></td>
+                    <td>{{d.case_no}}</td>
+                    <td>{{d.prosecution}}</td>
+                    <td>{{d.where_about_the_accused}}</td>
+                    <td>Accd. {{d.name_of_the_accused}}</td>
+                    <td>{{d.where_about_the_accused}}</td>
+                    <td>Since {{d.in_custody_from}}</td>
+                    <td>{{d.remarks}}</td>
                     <!-- <td>₹{{ (d.court_fees ?? 0) + (d.other_fees ?? 0) }}/-</td> -->
                 </tr>
                 }

@@ -27,18 +27,21 @@ export class VunerableGroupPendingCasesComponent {
 
 
   filterData: any | null = null
-  vulnerableOtherGroupCases: VulnerableGroupPendingCase[] | null = null;
+  vulnerableOtherGroupCases: any | null = null;
   lastDateOfMonth:any| number=''
 
 
-  allVulnerableOtherGroupCases: VulnerableGroupPendingCase[] = []
+  allVulnerableOtherGroupCases: any = []
   casetypeNames: string[] = []
   defaultSelectedOrgId: number | null = null
   filteredOrganization: string = ''
 
 
-  constructor(private authService: AuthService, private vulnerableOtherGroupService: VulnerableGroupCaseService,
-    private localStorageService: LocalStorageService) { }
+  constructor(private authService: AuthService,
+    private vulnerableOtherGroupService: VulnerableGroupCaseService,
+    private localStorageService: LocalStorageService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
 
   ngOnInit(): void {
@@ -100,7 +103,7 @@ export class VunerableGroupPendingCasesComponent {
 
 
   onSubmit(formdata: NgForm) {
-    var org_id=formdata.value.user
+    var org_id=formdata.value.organization
     if (formdata.invalid)
     {
       formdata.control.markAllAsTouched()
@@ -115,18 +118,25 @@ export class VunerableGroupPendingCasesComponent {
       }
       this.filteredOrganization = (this.organisationList as any[]).find(x => x.id == org_id
       )?.organization_name ?? '';
-      this.vulnerableOtherGroupService.get_monthly_vulnerable_group_cases(formdata.value.month, formdata.value.year,formdata.value.user,formdata.value.case_type).subscribe(
+      this.vulnerableOtherGroupService.get_monthly_vulnerable_group_cases(formdata.value.month, formdata.value.year,formdata.value.organization,formdata.value.case_type).subscribe(
         data => {
           this.vulnerableOtherGroupCases = data;
           this.allVulnerableOtherGroupCases = data;
 
-          this.casetypeNames = ['All', ...new Set(this.vulnerableOtherGroupCases.map(caseItem => caseItem.type_name))];
+          // this.casetypeNames = ['All', ...new Set(this.vulnerableOtherGroupCases.map(caseItem => caseItem.type_name))];
           console.log("Monthly vulnerable case data is ", data)
           this.lastDateOfMonth = this.getLastDateOfMonth(Number(formdata.value.month), Number(formdata.value.year));
           // if(this.vulnerableOtherGroupCases.length==0){
           // this.vulnerableOtherGroupCases=dummydata.flatMap(caseItem=> caseItem.data)
           // }
-          this.showLoader = false
+          this.showLoader = false;
+          this.cdr.detectChanges();
+
+        },
+        error => {
+          console.log(error);
+          this.showLoader = false;
+          this.cdr.detectChanges();
 
         }
       )

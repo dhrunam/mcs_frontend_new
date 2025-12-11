@@ -58,14 +58,14 @@
                 </div>
                 <div class="col-3 col-lg-2" *ngIf="username==='hcs_admin'">
                     <label for="year" class="form-label ">Organization <span class="text-danger">*</span></label>
-                    <select class="form-select shadow-none" name="user" #user="ngModel" [ngModel]="filterData && filterData.user || ''"
+                    <select class="form-select shadow-none" name="organization" #organization="ngModel" [ngModel]="filterData && filterData.user || ''"
                         [disabled]="showLoader" (change)="ResetReport()" required>
                         <option value="">---Select User---</option>
                         <option *ngFor="let org of organisationList" [value]="org.id">
                             {{org.organization_name}}
                         </option>
                     </select>
-                    <small class="text-danger" *ngIf="user.touched && user.invalid">select a user</small>
+                    <small class="text-danger" *ngIf="organization.touched && organization.invalid">Select an Organization</small>
                 </div>
 
 
@@ -102,11 +102,15 @@
 
     <div *ngIf="vulnerableOtherGroupCases" class="row g-3 mt-4 mb-0" id="table-to-pdf">
         <!-- <span class="text-center" *ngIf="caseStatements.length > 0"> -->
+           @if(vulnerableOtherGroupCases){
+
+
         <span class="text-center">
             <h5>STATUS REPORT OF THE PENDING CASES IN {{filteredOrganization | uppercase}}, SIKKIM<br /> PERTAINING TO SENIOR CITIZENS, MINORS,
             DIFFERENTLY ABLED AND OTHER MARGINALIZED GROUPS AS ON {{lastDateOfMonth}}.{{month.value |
                 uppercase}}.{{year.value}}</h5>
         </span>
+      }
         <table class="table table-bordered" *ngIf="vulnerableOtherGroupCases">
             <thead class="table-header">
                 <tr>
@@ -116,18 +120,13 @@
                 </tr>
             </thead>
             <tbody>
-                @if(vulnerableOtherGroupCases && vulnerableOtherGroupCases.length>0){
-                @for(d of vulnerableOtherGroupCases;track d ; let i=$index){
+                @if(vulnerableOtherGroupCases && vulnerableOtherGroupCases.results){
+                @for(d of vulnerableOtherGroupCases.results;track d ; let i=$index){
                 <tr>
-                    <td width="5">{{i+1}}</td>
-                    <td width="80">{{d.type_name}} No. {{d.reg_no}} of {{d.reg_year}} <br/>
-                    {{d.pet_name}} Vrs. <span *ngIf="d.ext_respondents?.length ?? 0 > 0">1.</span> {{d.res_name}}
-                    </td >
-                    <!-- <td>{{d.pet_name}} <br /> Vrs. {{d.res_name}} <br> -->
-                        <!-- <span *ngFor="let item of d.ext_respondents; let j = index">
-                            {{ j + 2 }}. {{ item.respondent }}<br>
-                        </span> {{d.act_section?.[0]?.act_section}}</td> -->
-                    <td width="15"></td>
+                    <td width="10">{{i+1}}</td>
+                    <td width="80">{{d.case_type}} No. {{d.case_no}} of {{d.case_title}} <br /> {{d.petitioner}} <br /> Vrs. <br /> {{d.res_name}}</td>
+                            <!-- <td width="10">Contested ({{d.date_of_decision}}) <br/> on  {{d.transfer_est}}</td> -->
+                    <td width="10"> </td>
                 </tr>
                 }
                 }

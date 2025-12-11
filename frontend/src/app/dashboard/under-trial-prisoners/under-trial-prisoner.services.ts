@@ -10,18 +10,15 @@ export class UnderTrialService {
     constructor(private http: HttpClient) { }
     get_under_trial_prisoner_list(month: string, year: number, org_id:string): Observable<any[]> {
 
-        const url = `${serverURL}/v1/reports/cis/report/present/prisoner?month=${month}&year=${year}&org_id=${org_id}`;
+        const url = `${serverURL}/v2/report/under/trial/prisoners/get/for/hcs?report_month=${month}&report_year=${year}&organization=${org_id}`;
         console.log(url)
-        return this.http.get<{ data: any[] }>(url)
-            .pipe(
-                map(response => response.data.map((item: any) => castAsUnderTrialPrisoner(item))
-                ), )
-                
-                
+        return this.http.get<any>(url)
+
+
     }
 
 
     getOrganizations() {
-        return this.http.get<any>(`${serverURL}/v1/auth/organization/`);
+        return this.http.get<any>(`${serverURL}/v2/organization/`);
     }
 }
