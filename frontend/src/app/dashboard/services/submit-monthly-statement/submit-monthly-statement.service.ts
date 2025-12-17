@@ -9,7 +9,7 @@ export class SubmitMonthlyStatementService {
   constructor(private http: HttpClient) { }
   GetDraftMonthlyStatement(month:string,year:number, civil_criminal:string) {
     let params = new HttpParams()
-    .set('is_draft', 'True')
+    // .set('is_draft', 'True')
     .set('report_month', month.toString())
     .set('report_year', year.toString())
     .set('civil_criminal',civil_criminal);
