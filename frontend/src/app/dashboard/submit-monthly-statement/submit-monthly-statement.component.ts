@@ -91,7 +91,7 @@ export class SubmitMonthlyStatementComponent {
   GetCaseTypes() {
     this.submitMonthlyStatementService.GetCaseTypes(this.loginUserInfo.groups[0].name).subscribe({
       next: data => {
-        this.caseTypeList = data.results;
+        this.caseTypeList = data;
         console.log("GetCaseTypes:", this.caseTypeList);
       }
     });

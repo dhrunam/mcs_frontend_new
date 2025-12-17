@@ -70,7 +70,7 @@ export class SubmitMonthlyStatementService {
   GetCaseTypes(court_type:string) {
     let params = new HttpParams()
     .set('court_type', court_type);
-    return this.http.get<any>(`${serverURL}/v2/report/case_type/`,{params});
+    return this.http.get<any>(`${serverURL}/v2/report/case_type/all`,{params});
   }
 
   GetOldestCaseDetails(month:string,year:number, organization:number, civil_criminal:string ) {
